@@ -18,5 +18,12 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Hello!", Toast.LENGTH_LONG).show();
             }
         });
+
+        findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "Hello2222222!", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }
