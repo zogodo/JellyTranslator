@@ -11,7 +11,10 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -46,28 +49,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String DB_NAME = "dictionary.db";//这个就是你要创建存到/data下的数据库的名字
         String DB_PATH = "/sdcard/Android" + Environment.getDataDirectory().getAbsolutePath() + "/" + PACKAGE_NAME + "/" + DB_NAME ; // 存放路径
         SQLiteDatabase db = this.openDateBase(DB_PATH);
-        Cursor cursor = db.rawQuery("SELECT word, meaning FROM e2c where word=? or id=765", new String[]{"a"});
+        Cursor cursor = db.rawQuery("SELECT rowid _id, word, substr(meaning, 1, 30) as meaning FROM e2c where word=? or id=765", new String[]{"a"});
         int i = 0;
         while (cursor.moveToNext()) {
             String word = cursor.getString(cursor.getColumnIndex("word"));
             String meaning = cursor.getString(cursor.getColumnIndex("meaning"));
         }
 
-        String[] strs = new String[] {
-                "first", "second", "third", "fourth", "fifth"
-        };
-        ListView lv = (ListView)findViewById(R.id.listView);//得到ListView对象的引用 /*为ListView设置Adapter来绑定数据*/
-        lv.setAdapter(new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, strs));
+//        String[] strs = new String[] {
+//                "first", "second", "third", "fourth", "fifth"
+//        };
+       ListView lv = (ListView)findViewById(R.id.listView);//得到ListView对象的引用 /*为ListView设置Adapter来绑定数据*/
+//        lv.setAdapter(new ArrayAdapter<String>(this,
+//                android.R.layout.simple_list_item_1, strs));
+        //((TextView)findViewById(android.R.id.text1)).setTextSize(20);
+        SimpleCursorAdapter adapter = new SimpleCursorAdapter(
+                this,
+                R.layout.simple_list_item_2,
+                cursor, new String[]{"word","meaning"},
+                new int[]{R.id.text1,R.id.text2});
+        lv.setAdapter(adapter);
 
-//        SimpleCursorAdapter adapter = new SimpleCursorAdapter(this,
-//                android.R.layout.expandable_list_content,
-//                cursor, new String[]{"word","meaning"},
-//                new int[]{R.id.listView,R.id.listView});
-        //lv.setAdapter(adapter);
-
-        cursor.close();
-        db.close();
+        //cursor.close();
+        //db.close();
     }
 
     private SQLiteDatabase openDateBase(String dbFile)
