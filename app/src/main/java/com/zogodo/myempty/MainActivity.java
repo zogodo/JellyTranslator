@@ -53,8 +53,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             String meaning = cursor.getString(cursor.getColumnIndex("meaning"));
         }
 
-        //ListView lv = (ListView)findViewById(R.id.listView);//得到ListView对象的引用 /*为ListView设置Adapter来绑定数据*/
-        //SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.support_simple_spinner_dropdown_item, cursor, new String[]{"word","meaning"}, new int[]{R.id.listView,R.id.listView});
+        String[] strs = new String[] {
+                "first", "second", "third", "fourth", "fifth"
+        };
+        ListView lv = (ListView)findViewById(R.id.listView);//得到ListView对象的引用 /*为ListView设置Adapter来绑定数据*/
+        lv.setAdapter(new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1, strs));
+
+//        SimpleCursorAdapter adapter = new SimpleCursorAdapter(this,
+//                android.R.layout.expandable_list_content,
+//                cursor, new String[]{"word","meaning"},
+//                new int[]{R.id.listView,R.id.listView});
         //lv.setAdapter(adapter);
 
         cursor.close();
