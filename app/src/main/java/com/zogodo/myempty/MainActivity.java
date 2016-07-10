@@ -1,78 +1,37 @@
 package com.zogodo.myempty;
 
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import org.w3c.dom.Text;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class MainActivity extends AppCompatActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Toast.makeText(getApplicationContext(), "Hello world!", Toast.LENGTH_LONG).show();
-//            }
-//        });
-//
-//        findViewById(R.id.button2).setOnClickListener(new HandleClick2());
-//
-//        findViewById(R.id.button3).setOnClickListener(handleClick3);
-//
-//        findViewById(R.id.button4).setOnClickListener(this);
-
-        //InputStream db_file = getResources().openRawResource(R.raw.dictionary);
-
         String PACKAGE_NAME = getPackageName();//这个包名是你的应用程序在DDMS中file system中data下面的包名，这个位置容易出错，会写成当前的包
         String DB_NAME = "dictionary.db";//这个就是你要创建存到/data下的数据库的名字
         String DB_PATH = "/sdcard/Android" + Environment.getDataDirectory().getAbsolutePath() + "/" + PACKAGE_NAME + "/" + DB_NAME ; // 存放路径
-        SQLiteDatabase db = this.openDateBase(DB_PATH);
-        Cursor cursor = db.rawQuery("SELECT rowid _id, word, substr(meaning, 1, 30) as meaning FROM e2c where word=? or id=765", new String[]{"a"});
-        int i = 0;
-        while (cursor.moveToNext()) {
-            String word = cursor.getString(cursor.getColumnIndex("word"));
-            String meaning = cursor.getString(cursor.getColumnIndex("meaning"));
-        }
-
-//        String[] strs = new String[] {
-//                "first", "second", "third", "fourth", "fifth"
-//        };
-       ListView lv = (ListView)findViewById(R.id.listView);//得到ListView对象的引用 /*为ListView设置Adapter来绑定数据*/
-//        lv.setAdapter(new ArrayAdapter<String>(this,
-//                android.R.layout.simple_list_item_1, strs));
-        //((TextView)findViewById(android.R.id.text1)).setTextSize(20);
-        SimpleCursorAdapter adapter = new SimpleCursorAdapter(
-                this,
-                R.layout.simple_list_item_2,
-                cursor, new String[]{"word","meaning"},
-                new int[]{R.id.text1,R.id.text2});
-        lv.setAdapter(adapter);
-
+        db = this.openDateBase(DB_PATH);
         //cursor.close();
         //db.close();
     }
+
+    private SQLiteDatabase db;
 
     private SQLiteDatabase openDateBase(String dbFile)
     {//传递进来的是一个数据库文件名  ：这个文件就是你要在/data下面存储的数据库名
@@ -110,23 +69,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return SQLiteDatabase.openOrCreateDatabase(dbFile, null);
     }
 
-    private class HandleClick2 implements View.OnClickListener{
-        public void onClick(View arg0) {
-            Toast.makeText(getApplicationContext(), "Hello world 2 !", Toast.LENGTH_LONG).show();
+    public void HandleClick(View arg0) {
+        //Toast.makeText(getApplicationContext(), "Hello world!", Toast.LENGTH_LONG).show();
+        EditText et1 = (EditText)findViewById(R.id.extractEditText);
+        String tran = et1.getText().toString();
+        Cursor cursor = db.rawQuery(
+                "SELECT rowid _id, word, substr(replace(meaning, '\\n', ''), 1, 30) as meaning FROM e2c where word=? or word like '" + tran + "%' order by id",
+                new String[]{tran});
+        int i = 0;
+        while (cursor.moveToNext()) {
+            String word = cursor.getString(cursor.getColumnIndex("word"));
+            String meaning = cursor.getString(cursor.getColumnIndex("meaning"));
         }
-    }
-
-    private View.OnClickListener handleClick3 = new View.OnClickListener(){
-        public void onClick(View arg0) {
-            Toast.makeText(getApplicationContext(), "Hello world 3 !", Toast.LENGTH_LONG).show();
-        }
-    };
-
-    public void onClick(View arg0) {
-        Toast.makeText(getApplicationContext(), "Hello world 4 !", Toast.LENGTH_LONG).show();
-    }
-
-    public void HandleClick5(View arg0) {
-        Toast.makeText(getApplicationContext(), "Hello world 4 !", Toast.LENGTH_LONG).show();
+        ListView lv = (ListView)findViewById(R.id.listView);//得到ListView对象的引用 /*为ListView设置Adapter来绑定数据*/
+        SimpleCursorAdapter adapter = new SimpleCursorAdapter(
+                this,
+                R.layout.simple_list_item_2,
+                cursor, new String[]{"word","meaning"},
+                new int[]{R.id.text1,R.id.text2});
+        lv.setAdapter(adapter);
     }
 }
