@@ -24,10 +24,7 @@
     <list default="true" id="4ae66f1d-79ae-464e-bb8c-59f52373f9b2" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/raw/dictionary.db" afterPath="$PROJECT_DIR$/app/src/main/res/raw/dictionary.db" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/app.iml" afterPath="$PROJECT_DIR$/app/app.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/zogodo/myempty/MainActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/zogodo/myempty/MainActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
     </list>
     <ignored path="MyEmpty.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -60,10 +57,11 @@
       <file leaf-file-name="MainActivity.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/zogodo/myempty/MainActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.48843187">
-              <caret line="96" column="84" selection-start-line="96" selection-start-column="84" selection-end-line="96" selection-end-column="84" />
+            <state vertical-scroll-proportion="0.5372751">
+              <caret line="39" column="56" selection-start-line="39" selection-start-column="56" selection-end-line="39" selection-end-column="56" />
               <folding>
                 <element signature="method#openDateBase#0;class#MainActivity#0" expanded="false" />
+                <element signature="method#HandleClick#0;class#MainActivity#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -2005,7 +2003,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="2" width="1316" height="772" extended-state="0" />
+    <frame x="-7" y="2" width="1316" height="772" extended-state="1" />
     <editor active="true" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -2092,6 +2090,7 @@
           <caret line="30" column="48" selection-start-line="30" selection-start-column="48" selection-end-line="30" selection-end-column="48" />
           <folding>
             <element signature="method#openDateBase#0;class#MainActivity#0" expanded="false" />
+            <element signature="method#HandleClick#0;class#MainActivity#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -2132,6 +2131,7 @@
           <caret line="72" column="27" selection-start-line="72" selection-start-column="16" selection-end-line="72" selection-end-column="27" />
           <folding>
             <element signature="method#openDateBase#0;class#MainActivity#0" expanded="false" />
+            <element signature="method#HandleClick#0;class#MainActivity#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -2164,6 +2164,7 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="method#openDateBase#0;class#MainActivity#0" expanded="false" />
+            <element signature="method#HandleClick#0;class#MainActivity#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -2182,6 +2183,7 @@
           <caret line="69" column="26" selection-start-line="69" selection-start-column="26" selection-end-line="69" selection-end-column="26" />
           <folding>
             <element signature="method#openDateBase#0;class#MainActivity#0" expanded="false" />
+            <element signature="method#HandleClick#0;class#MainActivity#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -2239,6 +2241,7 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="method#openDateBase#0;class#MainActivity#0" expanded="false" />
+            <element signature="method#HandleClick#0;class#MainActivity#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -2334,10 +2337,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/zogodo/myempty/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.48843187">
-          <caret line="96" column="84" selection-start-line="96" selection-start-column="84" selection-end-line="96" selection-end-column="84" />
+        <state vertical-scroll-proportion="0.5372751">
+          <caret line="39" column="56" selection-start-line="39" selection-start-column="56" selection-end-line="39" selection-end-column="56" />
           <folding>
             <element signature="method#openDateBase#0;class#MainActivity#0" expanded="false" />
+            <element signature="method#HandleClick#0;class#MainActivity#0" expanded="false" />
           </folding>
         </state>
       </provider>

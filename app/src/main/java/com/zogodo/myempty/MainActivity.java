@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity{
         et1.addTextChangedListener(new TextWatcher() {
 
             public void afterTextChanged(Editable s) {
-                if(s.toString().length() == 0) return;
+                //if(s.toString().length() == 0) return;
 
                 ((Button)findViewById(R.id.button)).performClick();
             }
@@ -90,17 +90,11 @@ public class MainActivity extends AppCompatActivity{
     }
 
     public void HandleClick(View arg0) {
-        //Toast.makeText(getApplicationContext(), "Hello world!", Toast.LENGTH_LONG).show();
         EditText et1 = (EditText)findViewById(R.id.editText);
         String tran = et1.getText().toString();
         Cursor cursor = db.rawQuery(
-                "SELECT rowid _id, word, meaning FROM e2c where word=? or word like '" + tran + "%'",
-                new String[]{tran});
-        int i = 0;
-        while (cursor.moveToNext()) {
-            String word = cursor.getString(cursor.getColumnIndex("word"));
-            String meaning = cursor.getString(cursor.getColumnIndex("meaning"));
-        }
+                "SELECT rowid _id, word, meaning FROM e2c where word like '" + tran + "%' limit 100", null);
+
         ListView lv = (ListView)findViewById(R.id.listView);//得到ListView对象的引用 /*为ListView设置Adapter来绑定数据*/
         SimpleCursorAdapter adapter = new SimpleCursorAdapter(
                 this,
@@ -108,10 +102,5 @@ public class MainActivity extends AppCompatActivity{
                 cursor, new String[]{"word","meaning"},
                 new int[]{R.id.text1,R.id.text2});
         lv.setAdapter(adapter);
-    }
-
-    public void EditChange()
-    {
-
     }
 }
