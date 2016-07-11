@@ -5,10 +5,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -27,6 +31,22 @@ public class MainActivity extends AppCompatActivity{
         String DB_NAME = "dictionary.db";//这个就是你要创建存到/data下的数据库的名字
         String DB_PATH = "/sdcard/Android" + Environment.getDataDirectory().getAbsolutePath() + "/" + PACKAGE_NAME + "/" + DB_NAME ; // 存放路径
         db = this.openDateBase(DB_PATH);
+
+        final EditText et1 = (EditText)findViewById(R.id.editText);
+
+        et1.addTextChangedListener(new TextWatcher() {
+
+            public void afterTextChanged(Editable s) {
+                if(s.toString().length() == 0) return;
+
+                ((Button)findViewById(R.id.button)).performClick();
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+        });
+
         //cursor.close();
         //db.close();
     }
@@ -71,10 +91,10 @@ public class MainActivity extends AppCompatActivity{
 
     public void HandleClick(View arg0) {
         //Toast.makeText(getApplicationContext(), "Hello world!", Toast.LENGTH_LONG).show();
-        EditText et1 = (EditText)findViewById(R.id.extractEditText);
+        EditText et1 = (EditText)findViewById(R.id.editText);
         String tran = et1.getText().toString();
         Cursor cursor = db.rawQuery(
-                "SELECT rowid _id, word, substr(replace(meaning, '\\n', ''), 1, 30) as meaning FROM e2c where word=? or word like '" + tran + "%' order by id",
+                "SELECT rowid _id, word, meaning FROM e2c where word=? or word like '" + tran + "%'",
                 new String[]{tran});
         int i = 0;
         while (cursor.moveToNext()) {
@@ -88,5 +108,10 @@ public class MainActivity extends AppCompatActivity{
                 cursor, new String[]{"word","meaning"},
                 new int[]{R.id.text1,R.id.text2});
         lv.setAdapter(adapter);
+    }
+
+    public void EditChange()
+    {
+
     }
 }
