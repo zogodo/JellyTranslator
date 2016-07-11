@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity{
         EditText et1 = (EditText)findViewById(R.id.editText);
         String tran = et1.getText().toString();
         Cursor cursor = db.rawQuery(
-                "SELECT rowid _id, word, meaning FROM e2c where word like '" + tran + "%' limit 100", null);
+                "SELECT rowid _id, word, substr(replace(meaning, '\\n', ''), 1, 100) as meaning FROM e2c where word like '" + tran + "%' limit 100", null);
 
         ListView lv = (ListView)findViewById(R.id.listView);//得到ListView对象的引用 /*为ListView设置Adapter来绑定数据*/
         SimpleCursorAdapter adapter = new SimpleCursorAdapter(
