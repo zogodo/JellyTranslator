@@ -3,10 +3,16 @@ package com.zogodo.myempty;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.SearchView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -32,27 +38,11 @@ public class MainActivity extends AppCompatActivity{
         String DB_PATH = "/sdcard/Android" + Environment.getDataDirectory().getAbsolutePath() + "/" + PACKAGE_NAME + "/" + DB_NAME ; // 存放路径
         db = this.openDateBase(DB_PATH);
 
-        final EditText et1 = (EditText)findViewById(R.id.editText);
-
-        et1.addTextChangedListener(new TextWatcher() {
-
-            public void afterTextChanged(Editable s) {
-                //if(s.toString().length() == 0) return;
-
-                ((Button)findViewById(R.id.button)).performClick();
-            }
-
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-        });
-
         //cursor.close();
         //db.close();
     }
 
     private SQLiteDatabase db;
-
     private SQLiteDatabase openDateBase(String dbFile)
     {//传递进来的是一个数据库文件名  ：这个文件就是你要在/data下面存储的数据库名
         File file = new File(dbFile);//打开这个文件
@@ -89,9 +79,7 @@ public class MainActivity extends AppCompatActivity{
         return SQLiteDatabase.openOrCreateDatabase(dbFile, null);
     }
 
-    public void HandleClick(View arg0) {
-        EditText et1 = (EditText)findViewById(R.id.editText);
-        String tran = et1.getText().toString();
+    public void updateListView(String tran) {
         Cursor cursor = db.rawQuery(
                 "SELECT rowid _id, word, substr(replace(meaning, '\\n', ''), 1, 100) as meaning FROM e2c where word like '" + tran + "%' limit 100", null);
 
@@ -102,5 +90,34 @@ public class MainActivity extends AppCompatActivity{
                 cursor, new String[]{"word","meaning"},
                 new int[]{R.id.text1,R.id.text2});
         lv.setAdapter(adapter);
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.options_menu, menu);
+        //getMenuInflater().inflate(R.menu.options_menu, menu);
+
+        final MenuItem item_s = menu.findItem(R.id.search);
+        SearchView search_view = (SearchView) MenuItemCompat.getActionView(item_s);
+        search_view.setIconified(false);  //默认展开
+        search_view.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            //输入完成后，点击回车或是完成键
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                if (query.length() > 0) {
+                    Log.e("onQueryTextSubmit","我是点击回车按钮");
+                }
+                return true;
+            }
+            //查询文本框有变化时事件
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                //Log.e("onQueryTextChange","我是内容改变");
+                updateListView(newText);
+                return false;
+            }
+        });
+
+        return true;
     }
 }

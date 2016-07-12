@@ -22,18 +22,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal">
 
-            <EditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/editText"
-                android:layout_weight="1" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="翻译"
-                android:onClick="HandleClick"
-                android:id="@+id/button" />
         </LinearLayout>
 
         <ListView
