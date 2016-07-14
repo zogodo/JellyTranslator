@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity{
 
         String PACKAGE_NAME = getPackageName();//这个包名是你的应用程序在DDMS中file system中data下面的包名，这个位置容易出错，会写成当前的包
         String DB_NAME = "dictionary.db";//这个就是你要创建存到/data下的数据库的名字
-        String DB_PATH = "/sdcard/Android" + Environment.getDataDirectory().getAbsolutePath() + "/" + PACKAGE_NAME + "/" + DB_NAME ; // 存放路径
+        String DB_PATH = "/sdcard/Android" + Environment.getDataDirectory().getAbsolutePath() + "/" + PACKAGE_NAME + "/files/Documents/" + DB_NAME ; // 存放路径
         db = this.openDateBase(DB_PATH);
 
         //cursor.close();
@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity{
             InputStream stream = getResources().openRawResource(R.raw.dictionary);//这个资源索引就是我们存放的数据库
             try
             {
+                File file4 = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);//新建/sdcard/Android/data/Package Name/files/Documents文件夹
                 //将获取到的stream 流写入道data中
                 //我们获取的是一个数据库文件，这个如果你直接打开肯定是乱码，但是起始字段肯定是“SQLite format ”，这个字符串系统懂，它代表着数据库文件
                 FileOutputStream outputStream = new FileOutputStream(dbFile);//我们把输出流写入到文件dbFile中去
@@ -80,8 +81,11 @@ public class MainActivity extends AppCompatActivity{
     }
 
     public void updateListView(String tran) {
+        if (tran.length() == 0) {
+            tran = " ";
+        }
         Cursor cursor = db.rawQuery(
-                "SELECT rowid _id, word, substr(replace(meaning, '\\n', ''), 1, 100) as meaning FROM e2c where word like '" + tran + "%' limit 100", null);
+                "SELECT rowid _id, word, substr(replace(meaning, '\\n', ' '), 1, 100) as meaning FROM e2cm where word like '" + tran + "%' limit 100", null);
 
         ListView lv = (ListView)findViewById(R.id.listView);//得到ListView对象的引用 /*为ListView设置Adapter来绑定数据*/
         SimpleCursorAdapter adapter = new SimpleCursorAdapter(
