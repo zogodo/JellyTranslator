@@ -43,23 +43,21 @@ public class MainActivity extends AppCompatActivity{
     }
 
     private SQLiteDatabase db;
-    private SQLiteDatabase openDateBase(String dbFile)
-    {//传递进来的是一个数据库文件名  ：这个文件就是你要在/data下面存储的数据库名
+    private SQLiteDatabase openDateBase(String dbFile) {
+        //传递进来的是一个数据库文件名  ：这个文件就是你要在/data下面存储的数据库名
         File file = new File(dbFile);//打开这个文件
-        if (!file.exists())
-        {   //如果该文件在你的/data下面不存在，那么我们就需要从资源文件中去加载它，就是写进去
+        if (!file.exists()) {
+            //如果该文件在你的/data下面不存在，那么我们就需要从资源文件中去加载它，就是写进去
             // // 打开raw中得数据库文件，获得stream流
             InputStream stream = getResources().openRawResource(R.raw.dictionary);//这个资源索引就是我们存放的数据库
-            try
-            {
+            try {
                 File file4 = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);//新建/sdcard/Android/data/Package Name/files/Documents文件夹
                 //将获取到的stream 流写入道data中
                 //我们获取的是一个数据库文件，这个如果你直接打开肯定是乱码，但是起始字段肯定是“SQLite format ”，这个字符串系统懂，它代表着数据库文件
                 FileOutputStream outputStream = new FileOutputStream(dbFile);//我们把输出流写入到文件dbFile中去
                 byte[] buffer = new byte[1024];
                 int count = 0;
-                while ((count = stream.read(buffer)) > 0)
-                {
+                while ((count = stream.read(buffer)) > 0) {
                     outputStream.write(buffer, 0, count);//把输入流的内容写到输出流中，
                 }
                 outputStream.close();//关闭输出流
@@ -67,12 +65,10 @@ public class MainActivity extends AppCompatActivity{
                 SQLiteDatabase db = SQLiteDatabase.openOrCreateDatabase(dbFile, null);
                 return db;
             }
-            catch (FileNotFoundException e)
-            { //文件没有找到的异常
+            catch (FileNotFoundException e) { //文件没有找到的异常
                 // TODO Auto-generated catch block
                 e.printStackTrace();
-            } catch (IOException e)
-            { // 输入输出异常
+            } catch (IOException e) { // 输入输出异常
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
@@ -123,5 +119,15 @@ public class MainActivity extends AppCompatActivity{
         });
 
         return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.about:
+                Toast.makeText(this, "关于", Toast.LENGTH_SHORT).show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

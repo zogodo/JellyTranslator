@@ -82,3 +82,4 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+app/src/main/res/raw/dictionary.db
