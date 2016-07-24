@@ -12,13 +12,16 @@ import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity
+{
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -32,9 +35,10 @@ public class MainActivity extends AppCompatActivity{
     }
 
     private String[] file_string;
+
     public void updateListView2(String tran)
     {
-        ListView lv = (ListView)findViewById(R.id.listView);
+        ListView lv = (ListView) findViewById(R.id.listView);
         int start = FileString.GetSimilarWordsStart(tran, file_string);
 
         if (tran.length() == 0 || start == -1)
@@ -44,7 +48,7 @@ public class MainActivity extends AppCompatActivity{
         }
 
         ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String, Object>>();
-        for(int i = 0;i < 100 && (tran + "zzz").compareTo(file_string[start + i]) >= 0; i++)
+        for (int i = 0; i < 100 && (tran + "zzz").compareTo(file_string[start + i]) >= 0; i++)
         {
             String[] WordList = GetWordList(file_string[start + i]);
             HashMap<String, Object> map = new HashMap<String, Object>();
@@ -53,11 +57,7 @@ public class MainActivity extends AppCompatActivity{
             listItem.add(map);
         }
 
-        SimpleAdapter mSimpleAdapter = new SimpleAdapter(this,listItem,
-                R.layout.simple_list_item_2,
-                new String[] {"word","meaning"},
-                new int[]{R.id.text1,R.id.text2}
-        );
+        SimpleAdapter mSimpleAdapter = new SimpleAdapter(this, listItem, R.layout.simple_list_item_2, new String[]{"word", "meaning"}, new int[]{R.id.text1, R.id.text2});
 
         lv.setAdapter(mSimpleAdapter);
     }
@@ -72,7 +72,8 @@ public class MainActivity extends AppCompatActivity{
         return WordList;
     }
 
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.options_menu, menu);
         //getMenuInflater().inflate(R.menu.options_menu, menu);
@@ -80,18 +81,23 @@ public class MainActivity extends AppCompatActivity{
         final MenuItem item_s = menu.findItem(R.id.search);
         SearchView search_view = (SearchView) MenuItemCompat.getActionView(item_s);
         search_view.setIconified(false);  //默认展开
-        search_view.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        search_view.setOnQueryTextListener(new SearchView.OnQueryTextListener()
+        {
             //输入完成后，点击回车或是完成键
             @Override
-            public boolean onQueryTextSubmit(String query) {
-                if (query.length() > 0) {
-                    Log.e("onQueryTextSubmit","我是点击回车按钮");
+            public boolean onQueryTextSubmit(String query)
+            {
+                if (query.length() > 0)
+                {
+                    Log.e("onQueryTextSubmit", "我是点击回车按钮");
                 }
                 return true;
             }
+
             //查询文本框有变化时事件
             @Override
-            public boolean onQueryTextChange(String newText) {
+            public boolean onQueryTextChange(String newText)
+            {
                 //Log.e("onQueryTextChange","我是内容改变");
                 updateListView2(newText);
                 return false;
@@ -101,8 +107,10 @@ public class MainActivity extends AppCompatActivity{
         return true;
     }
 
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch (item.getItemId())
+        {
             case R.id.about:
                 Toast.makeText(this, "关于", Toast.LENGTH_SHORT).show();
                 return true;
