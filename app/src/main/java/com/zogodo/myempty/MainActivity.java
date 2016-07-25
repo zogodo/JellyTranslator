@@ -15,21 +15,22 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity
 {
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        String PACKAGE_NAME = getPackageName(); //包名
-        String DB_NAME = "dictionary.db"; //Sqlite数据库文件名
-        String APP_DOC_PATH = "/sdcard/Android" + Environment.getDataDirectory().getAbsolutePath() + "/" + PACKAGE_NAME + "/files/Documents/";//文件夹名
+        String APP_DOC_PATH = "/sdcard/Android"
+                + Environment.getDataDirectory().getAbsolutePath() //数据文件夹路径
+                + "/" + getPackageName() //包名
+                + "/files/Documents/";//文件夹名
         idx_file = APP_DOC_PATH + "oxfordjm-ec.idx";
         dic_file = APP_DOC_PATH + "oxfordjm-ec.dict";
 
@@ -47,12 +48,18 @@ public class MainActivity extends AppCompatActivity
     String idx_file;
     String dic_file;
     RandomAccessFile randomFile;
-    StarDict.IndexItem[] index_items;
+    byte[][][] index_items;
     public void updateListView(String tran) throws IOException
     {
-        int start = StarDict.GetWordStart(tran, index_items);
         ListView lv = (ListView) findViewById(R.id.listView);
-        if (tran.length() == 0 || start == -1)
+
+        if (tran.length() == 0)
+        {
+            lv.removeAllViewsInLayout();
+            return;
+        }
+        int start = StarDict.GetWordStart(tran, index_items);
+        if (start == -1)
         {
             lv.removeAllViewsInLayout();
             return;
@@ -63,7 +70,7 @@ public class MainActivity extends AppCompatActivity
         String word;
         do
         {
-            word = index_items[start + i].word;
+            word = new String(index_items[start + i][0], StandardCharsets.UTF_8).trim();
             String meaning = StarDict.GetMeaningOfWord(randomFile, index_items[start + i]);
 
             HashMap<String, Object> map = new HashMap<String, Object>();

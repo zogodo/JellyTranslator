@@ -22,7 +22,6 @@ public class ReadFile
 
     public static String readFileByOffset(RandomAccessFile randomFile, int offset, int lenght) throws IOException
     {
-        //RandomAccessFile randomFile = new RandomAccessFile(fileName, "r");
         randomFile.seek(offset);
         byte[] bytes1 = new byte[lenght];
         randomFile.read(bytes1, 0, lenght);
