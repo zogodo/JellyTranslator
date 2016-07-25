@@ -13,6 +13,8 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -28,19 +30,28 @@ public class MainActivity extends AppCompatActivity
         String PACKAGE_NAME = getPackageName(); //包名
         String DB_NAME = "dictionary.db"; //Sqlite数据库文件名
         String APP_DOC_PATH = "/sdcard/Android" + Environment.getDataDirectory().getAbsolutePath() + "/" + PACKAGE_NAME + "/files/Documents/";//文件夹名
+        idx_file = APP_DOC_PATH + "oxfordjm-ec.idx";
+        dic_file = APP_DOC_PATH + "oxfordjm-ec.dict";
 
-        String file_path = APP_DOC_PATH + "oxfordjm-ec.txt";
-        file_string = FileString.readFileByLines(file_path, 142367);
-
+        try
+        {
+            index_items = StarDict.GetAllIndexItems(idx_file, 142367);
+            randomFile = new RandomAccessFile(dic_file, "r");
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
     }
 
-    private String[] file_string;
-
-    public void updateListView2(String tran)
+    String idx_file;
+    String dic_file;
+    RandomAccessFile randomFile;
+    StarDict.IndexItem[] index_items;
+    public void updateListView(String tran) throws IOException
     {
+        int start = StarDict.GetWordStart(tran, index_items);
         ListView lv = (ListView) findViewById(R.id.listView);
-        int start = FileString.GetSimilarWordsStart(tran, file_string);
-
         if (tran.length() == 0 || start == -1)
         {
             lv.removeAllViewsInLayout();
@@ -48,42 +59,36 @@ public class MainActivity extends AppCompatActivity
         }
 
         ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String, Object>>();
-        for (int i = 0; i < 100 && (tran + "zzz").compareTo(file_string[start + i]) >= 0; i++)
+        int i = 0;
+        String word;
+        do
         {
-            String[] WordList = GetWordList(file_string[start + i]);
+            word = index_items[start + i].word;
+            String meaning = StarDict.GetMeaningOfWord(randomFile, index_items[start + i]);
+
             HashMap<String, Object> map = new HashMap<String, Object>();
-            map.put("word", WordList[0]);
-            map.put("meaning", WordList[1]);
+            map.put("word", word);
+            map.put("meaning", meaning);
             listItem.add(map);
+            i++;
         }
+        while(i < 100 && (tran + "zzz").compareTo(word) >= 0);
 
-        SimpleAdapter mSimpleAdapter = new SimpleAdapter(this, listItem, R.layout.simple_list_item_2, new String[]{"word", "meaning"}, new int[]{R.id.text1, R.id.text2});
-
+        SimpleAdapter mSimpleAdapter = new SimpleAdapter(this,
+                listItem, R.layout.simple_list_item_2, new String[]{"word", "meaning"},
+                new int[]{R.id.text1, R.id.text2});
         lv.setAdapter(mSimpleAdapter);
-    }
-
-    public String[] GetWordList(String file_line)
-    {
-        String[] WordList = file_line.split("<p>|</p>|<np>");
-        if (WordList.length == 3)
-        {
-            WordList[1] = WordList[2];
-        }
-        return WordList;
     }
 
     public boolean onCreateOptionsMenu(Menu menu)
     {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.options_menu, menu);
-        //getMenuInflater().inflate(R.menu.options_menu, menu);
+        getMenuInflater().inflate(R.menu.options_menu, menu);
 
         final MenuItem item_s = menu.findItem(R.id.search);
         SearchView search_view = (SearchView) MenuItemCompat.getActionView(item_s);
-        search_view.setIconified(false);  //默认展开
+        search_view.setIconified(false);  //默认展开 SearchView
         search_view.setOnQueryTextListener(new SearchView.OnQueryTextListener()
         {
-            //输入完成后，点击回车或是完成键
             @Override
             public boolean onQueryTextSubmit(String query)
             {
@@ -94,12 +99,17 @@ public class MainActivity extends AppCompatActivity
                 return true;
             }
 
-            //查询文本框有变化时事件
             @Override
             public boolean onQueryTextChange(String newText)
             {
-                //Log.e("onQueryTextChange","我是内容改变");
-                updateListView2(newText);
+                try
+                {
+                    updateListView(newText);
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
                 return false;
             }
         });
