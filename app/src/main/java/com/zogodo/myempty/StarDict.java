@@ -9,39 +9,32 @@ import java.nio.charset.StandardCharsets;
  */
 public class StarDict
 {
-    public static byte[][][] GetAllIndexItems(String idx_file, int word_count) throws IOException
+    public static byte[] GetAllIndexItems(String idx_file, int word_count) throws IOException
     {
         byte[] file_bytes = ReadFile.readFileByByte(idx_file);
 
-        byte[][][] index_items = new byte[word_count][3][];
+        byte[] index_file_align = new byte[word_count * 56];
 
-        for (int i = 0, item = 0; item < word_count; item++)
+        for (int i = 0, j = 0, w = 0; w < word_count; w++)
         {
-            index_items[item] = new byte[3][];
-            index_items[item][0] = new byte[48];
-            index_items[item][1] = new byte[4];
-            index_items[item][2] = new byte[4];
-
-            int j = 0;
-            while (file_bytes[i] != 0)
+            while (file_bytes[i] != 0 && j%56 < 48)
             {
-                index_items[item][0][j] = file_bytes[i];
+                //记录单词
+                index_file_align[j] = file_bytes[i];
                 j++;
                 i++;
             }
+            j = j + (48 - j%56);
             i++;
 
-            for (j = 0; j < 4; j++, i++)
+            for (int k = 0; k < 8; k++, j++, i++)
             {
-                index_items[item][1][j] = file_bytes[i];
-            }
-
-            for (j = 0; j < 4; j++, i++)
-            {
-                index_items[item][2][j] = file_bytes[i];
+                //记录索引和长度
+                index_file_align[j] = file_bytes[i];
             }
         }
-        return index_items;
+        System.gc();
+        return index_file_align;
     }
 
     public static int to_int(byte[] bytes)
@@ -52,23 +45,31 @@ public class StarDict
                 + ((int) bytes[3] & 0x0FF);
     }
 
-    public static int GetWordStart(String tran, byte[][][] index_items)
+    public static int GetWordStart(String tran, byte[] index_file_align)
     {
         int low = 0;
-        int high = index_items.length - 1;
+        int high = index_file_align.length/56 - 1;
 
         while (low <= high)
         {
             int middle = low + ((high - low) >> 1);
             if (middle == 0)
             {
-                return middle;
+                return 0;
             }
-            String word = new String(index_items[middle][0], StandardCharsets.UTF_8).trim();
-            String word_befor = new String(index_items[middle - 1][0], StandardCharsets.UTF_8).trim();
-            if (tran.compareTo(word) <= 0 && tran.compareTo(word_befor) > 0)
+
+            byte[] word_byte = new byte[48];
+            System.arraycopy(index_file_align, middle*56, word_byte, 0, 48);
+            byte[] word_befor_byte = new byte[48];
+            System.arraycopy(index_file_align, middle*56 - 56, word_befor_byte, 0, 48);
+
+            String word = new String(word_byte, StandardCharsets.UTF_8).trim();
+            String word_befor = new String(word_befor_byte, StandardCharsets.UTF_8).trim();
+
+            if (tran.compareTo(word) == 0
+                || (tran.compareTo(word_befor) > 0 && (tran).compareTo(word) < 0 && (tran + "|").compareTo(word) > 0))
             {
-                return middle;
+                return middle*56;
             }
             if (tran.compareTo(word) < 0)
             {
@@ -82,10 +83,15 @@ public class StarDict
         return -1;
     }
 
-    public static String GetMeaningOfWord(RandomAccessFile dic_file, byte[][] index_item) throws IOException
+    public static String GetMeaningOfWord(byte[] index_file_align, RandomAccessFile dic_file, int index) throws IOException
     {
-        int offset = to_int(index_item[1]);
-        int length = to_int(index_item[2]);
+        byte[] offset_byte = new byte[4];
+        System.arraycopy(index_file_align, index + 48, offset_byte, 0, 4);
+        byte[] length_byte = new byte[4];
+        System.arraycopy(index_file_align, index + 52, length_byte, 0, 4);
+
+        int offset = to_int(offset_byte);
+        int length = to_int(length_byte);
         return ReadFile.readFileByOffset(dic_file, offset, length);
     }
 }

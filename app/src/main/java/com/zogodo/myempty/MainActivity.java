@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity
     String idx_file;
     String dic_file;
     RandomAccessFile randomFile;
-    byte[][][] index_items;
+    byte[] index_items;
     public void updateListView(String tran) throws IOException
     {
         ListView lv = (ListView) findViewById(R.id.listView);
@@ -70,8 +70,11 @@ public class MainActivity extends AppCompatActivity
         String word;
         do
         {
-            word = new String(index_items[start + i][0], StandardCharsets.UTF_8).trim();
-            String meaning = StarDict.GetMeaningOfWord(randomFile, index_items[start + i]);
+            byte[] word_byte = new byte[48];
+            System.arraycopy(index_items, start + i*56, word_byte, 0, 48);
+            word = new String(word_byte, StandardCharsets.UTF_8).trim();
+
+            String meaning = StarDict.GetMeaningOfWord(index_items,randomFile, start + i*56);
 
             HashMap<String, Object> map = new HashMap<String, Object>();
             map.put("word", word);
@@ -79,7 +82,7 @@ public class MainActivity extends AppCompatActivity
             listItem.add(map);
             i++;
         }
-        while(i < 100 && (tran + "zzz").compareTo(word) >= 0);
+        while(i < 100 && (tran + "|").compareTo(word) >= 0);
 
         SimpleAdapter mSimpleAdapter = new SimpleAdapter(this,
                 listItem, R.layout.simple_list_item_2, new String[]{"word", "meaning"},
