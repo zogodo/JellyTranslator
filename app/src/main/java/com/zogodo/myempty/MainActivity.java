@@ -31,13 +31,13 @@ public class MainActivity extends AppCompatActivity
                 + Environment.getDataDirectory().getAbsolutePath() //数据文件夹路径
                 + "/" + getPackageName() //包名
                 + "/files/Documents/";//文件夹名
-        idx_file = APP_DOC_PATH + "oxfordjm-ec.idx";
-        dic_file = APP_DOC_PATH + "oxfordjm-ec.dict";
+        String idx_file = APP_DOC_PATH + "oxfordjm-ec.idx";
+        String dic_file = APP_DOC_PATH + "oxfordjm-ec.dict";
+        int word_count = 142367;
 
         try
         {
-            index_items = StarDict.GetAllIndexItems(idx_file, 142367);
-            randomFile = new RandomAccessFile(dic_file, "r");
+            ec_dic = new StarDict(idx_file, dic_file, word_count);
         }
         catch (IOException e)
         {
@@ -45,10 +45,8 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    String idx_file;
-    String dic_file;
-    RandomAccessFile randomFile;
-    byte[] index_items;
+    StarDict ec_dic;
+
     public void updateListView(String tran) throws IOException
     {
         ListView lv = (ListView) findViewById(R.id.listView);
@@ -58,7 +56,7 @@ public class MainActivity extends AppCompatActivity
             lv.removeAllViewsInLayout();
             return;
         }
-        int start = StarDict.GetWordStart(tran, index_items);
+        int start = ec_dic.GetWordStart(tran);
         if (start == -1)
         {
             lv.removeAllViewsInLayout();
@@ -71,10 +69,10 @@ public class MainActivity extends AppCompatActivity
         do
         {
             byte[] word_byte = new byte[48];
-            System.arraycopy(index_items, start + i*56, word_byte, 0, 48);
+            System.arraycopy(ec_dic.index_file_align, start + i*56, word_byte, 0, 48);
             word = new String(word_byte, StandardCharsets.UTF_8).trim();
 
-            String meaning = StarDict.GetMeaningOfWord(index_items,randomFile, start + i*56);
+            String meaning = ec_dic.GetMeaningOfWord(start + i*56);
 
             HashMap<String, Object> map = new HashMap<String, Object>();
             map.put("word", word);
