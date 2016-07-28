@@ -31,13 +31,17 @@ public class MainActivity extends AppCompatActivity
                 + Environment.getDataDirectory().getAbsolutePath() //数据文件夹路径
                 + "/" + getPackageName() //包名
                 + "/files/Documents/";//文件夹名
-        String idx_file = APP_DOC_PATH + "oxfordjm-ec.idx";
-        String dic_file = APP_DOC_PATH + "oxfordjm-ec.dict";
-        int word_count = 142367;
+        String ec_idx_file = APP_DOC_PATH + "oxfordjm-ec.idx";
+        String ec_dic_file = APP_DOC_PATH + "oxfordjm-ec.dict";
+        int ec_word_count = 142367;
+        String ce_idx_file = APP_DOC_PATH + "langdao-ce-gb.idx";
+        String ce_dic_file = APP_DOC_PATH + "langdao-ce-gb.dict";
+        int ce_word_count = 405719;
 
         try
         {
-            ec_dic = new StarDict(idx_file, dic_file, word_count);
+            ec_dic = new StarDict(ec_idx_file, ec_dic_file, ec_word_count);
+            ce_dic = new StarDict(ce_idx_file, ce_dic_file, ce_word_count);
         }
         catch (IOException e)
         {
@@ -46,6 +50,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     StarDict ec_dic;
+    StarDict ce_dic;
+    StarDict dic_now;
 
     public void updateListView(String tran) throws IOException
     {
@@ -56,7 +62,15 @@ public class MainActivity extends AppCompatActivity
             lv.removeAllViewsInLayout();
             return;
         }
-        int start = ec_dic.GetWordStart(tran);
+
+        dic_now = ec_dic;
+        int start = dic_now.GetWordStart(tran);
+        if (start == -1)
+        {
+            lv.removeAllViewsInLayout();
+            dic_now = ce_dic;
+        }
+        start = dic_now.GetWordStart(tran);
         if (start == -1)
         {
             lv.removeAllViewsInLayout();
@@ -65,22 +79,23 @@ public class MainActivity extends AppCompatActivity
 
         ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String, Object>>();
         int i = 0;
-        String word;
-        do
-        {
-            byte[] word_byte = new byte[48];
-            System.arraycopy(ec_dic.index_file_align, start + i*56, word_byte, 0, 48);
-            word = new String(word_byte, StandardCharsets.UTF_8).trim();
+        byte[] word_byte = new byte[48];
+        System.arraycopy(dic_now.index_file_align, start + i*56, word_byte, 0, 48);
+        String word = new String(word_byte, StandardCharsets.UTF_8).trim();
 
-            String meaning = ec_dic.GetMeaningOfWord(start + i*56);
+        while(i < 100 && word.indexOf(tran) == 0)
+        {
+            String meaning = dic_now.GetMeaningOfWord(start + i*56);
 
             HashMap<String, Object> map = new HashMap<String, Object>();
             map.put("word", word);
             map.put("meaning", meaning);
             listItem.add(map);
             i++;
+
+            System.arraycopy(dic_now.index_file_align, start + i*56, word_byte, 0, 48);
+            word = new String(word_byte, StandardCharsets.UTF_8).trim();
         }
-        while(i < 100 && (tran + "|").compareTo(word) >= 0);
 
         SimpleAdapter mSimpleAdapter = new SimpleAdapter(this,
                 listItem, R.layout.simple_list_item_2, new String[]{"word", "meaning"},

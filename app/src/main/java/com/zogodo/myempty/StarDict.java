@@ -77,8 +77,7 @@ public class StarDict
             String word = new String(word_byte, StandardCharsets.UTF_8).trim();
             String word_befor = new String(word_befor_byte, StandardCharsets.UTF_8).trim();
 
-
-            if (tran.compareTo(word) <= 0 && tran.compareTo(word_befor) > 0)
+            if (word_befor.indexOf(tran) == -1 && word.indexOf(tran) == 0)
             {
                 return middle*56;
             }
