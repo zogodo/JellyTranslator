@@ -1,5 +1,7 @@
 package com.zogodo.myempty;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
@@ -9,10 +11,33 @@ import java.nio.charset.StandardCharsets;
  */
 public class StarDict
 {
-    StarDict(String idx_file_path, String dic_file_path, int wordcount) throws IOException
+    StarDict(String idx_file_path, String dic_file_path, String info_file_path) throws IOException
     {
-        this.word_count = wordcount;
-        this.index_file_align = this.GetAllIndexItems(idx_file_path);
+        String info_string[] = ReadFile.readFileByLines(info_file_path, 6);
+        for (String word_count_info : info_string)
+        {
+            if (word_count_info.indexOf("wordcount=") == 0)
+            {
+                word_count_info = word_count_info.substring(10);
+                this.word_count = Integer.parseInt(word_count_info);
+            }
+            //info_string[2] = info_string[2].substring(10);
+        }
+
+        File align_idx_file = new File(idx_file_path + "_align");
+        if (align_idx_file.exists())
+        {
+            this.index_file_align = ReadFile.readFileByByte(idx_file_path + "_align");
+        }
+        else
+        {
+            this.index_file_align = this.GetAllIndexItems(idx_file_path);
+
+            FileOutputStream fos = new FileOutputStream(idx_file_path + "_align");
+            fos.write(this.index_file_align);
+            fos.close();
+        }
+
         this.dic_file = new RandomAccessFile(dic_file_path, "r");
     }
 

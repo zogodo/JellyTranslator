@@ -30,23 +30,27 @@ public class MainActivity extends AppCompatActivity
         String APP_DOC_PATH = "/sdcard/Android"
                 + Environment.getDataDirectory().getAbsolutePath() //数据文件夹路径
                 + "/" + getPackageName() //包名
-                + "/files/Documents/";//文件夹名
-        String ec_idx_file = APP_DOC_PATH + "oxfordjm-ec.idx";
-        String ec_dic_file = APP_DOC_PATH + "oxfordjm-ec.dict";
-        int ec_word_count = 142367;
-        String ce_idx_file = APP_DOC_PATH + "langdao-ce-gb.idx";
-        String ce_dic_file = APP_DOC_PATH + "langdao-ce-gb.dict";
-        int ce_word_count = 405719;
+                + "/files/dic/";//文件夹名
 
+        String ec_idx_file = APP_DOC_PATH + "e2c_idx.idx";
+        String ec_dic_file = APP_DOC_PATH + "e2c_dic.dict";
+        String ec_ifo_file = APP_DOC_PATH + "e2c_ifo.ifo";
+
+        String ce_idx_file = APP_DOC_PATH + "c2e_idx.idx";
+        String ce_dic_file = APP_DOC_PATH + "c2e_dic.dict";
+        String ce_ifo_file = APP_DOC_PATH + "c2e_ifo.ifo";
+
+        Long time0 = System.currentTimeMillis();
         try
         {
-            ec_dic = new StarDict(ec_idx_file, ec_dic_file, ec_word_count);
-            ce_dic = new StarDict(ce_idx_file, ce_dic_file, ce_word_count);
+            ec_dic = new StarDict(ec_idx_file, ec_dic_file, ec_ifo_file);
+            ce_dic = new StarDict(ce_idx_file, ce_dic_file, ce_ifo_file);
         }
         catch (IOException e)
         {
             e.printStackTrace();
         }
+        Log.e("22222", ((Long)(System.currentTimeMillis() - time0)).toString());
     }
 
     StarDict ec_dic;
@@ -69,12 +73,12 @@ public class MainActivity extends AppCompatActivity
         {
             lv.removeAllViewsInLayout();
             dic_now = ce_dic;
-        }
-        start = dic_now.GetWordStart(tran);
-        if (start == -1)
-        {
-            lv.removeAllViewsInLayout();
-            return;
+            start = dic_now.GetWordStart(tran);
+            if (start == -1)
+            {
+                lv.removeAllViewsInLayout();
+                return;
+            }
         }
 
         ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String, Object>>();
@@ -86,6 +90,8 @@ public class MainActivity extends AppCompatActivity
         while(i < 100 && word.indexOf(tran) == 0)
         {
             String meaning = dic_now.GetMeaningOfWord(start + i*56);
+            meaning = meaning.replaceAll("\n", "");
+            meaning = meaning.replaceAll(" ([a-z]{1,7}\\.)", "\n$1 ");
 
             HashMap<String, Object> map = new HashMap<String, Object>();
             map.put("word", word);

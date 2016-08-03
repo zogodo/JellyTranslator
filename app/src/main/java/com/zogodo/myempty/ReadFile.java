@@ -1,6 +1,8 @@
 package com.zogodo.myempty;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
@@ -27,5 +29,22 @@ public class ReadFile
         randomFile.read(bytes1, 0, lenght);
         String str1 = new String(bytes1, StandardCharsets.UTF_8);
         return str1;
+    }
+
+    public static String[] readFileByLines(String fileName, int fileLines) throws IOException
+    {
+        File file = new File(fileName);
+        BufferedReader reader = null;
+        String[] file_string = new String[fileLines];
+        reader = new BufferedReader(new FileReader(file));
+        file_string[0] = new String();
+        int i = 0;
+        while (i < fileLines)
+        {
+            file_string[i++] = new String();
+            file_string[i - 1] = reader.readLine();
+        }
+        reader.close();
+        return file_string;
     }
 }
