@@ -87,11 +87,14 @@ public class MainActivity extends AppCompatActivity
         System.arraycopy(dic_now.index_file_align, start + i*56, word_byte, 0, 48);
         String word = new String(word_byte, StandardCharsets.UTF_8).trim();
 
-        while(i < 100 && word.indexOf(tran) == 0)
+        while(i < 100 && word.toLowerCase().indexOf(tran) == 0)
         {
             String meaning = dic_now.GetMeaningOfWord(start + i*56);
-            meaning = meaning.replaceAll("\n", "");
-            meaning = meaning.replaceAll(" ([a-z]{1,7}\\.)", "\n$1 ");
+            meaning = meaning.replaceAll(" *\n *", " ");
+            //meaning = meaning.replaceAll("^t(.+?)m", "[ $1 ] ");
+            //meaning = meaning.replaceAll("^m", "");
+            //meaning = meaning.replaceAll(" ([a-z]{1,7}\\.)", "\n$1 ");
+            meaning = meaning.replaceAll("^(.{1,13}?)\0", "[ $1 ] ");
 
             HashMap<String, Object> map = new HashMap<String, Object>();
             map.put("word", word);
@@ -133,7 +136,7 @@ public class MainActivity extends AppCompatActivity
             {
                 try
                 {
-                    updateListView(newText);
+                    updateListView(newText.toLowerCase());
                 }
                 catch (IOException e)
                 {

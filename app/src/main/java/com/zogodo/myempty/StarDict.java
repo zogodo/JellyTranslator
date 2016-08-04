@@ -83,6 +83,8 @@ public class StarDict
 
     public int GetWordStart(String tran)
     {
+        tran = tran.toLowerCase();
+
         int low = 0;
         int high = this.index_file_align.length/56 - 1;
 
@@ -99,10 +101,10 @@ public class StarDict
             byte[] word_befor_byte = new byte[48];
             System.arraycopy(this.index_file_align, middle*56 - 56, word_befor_byte, 0, 48);
 
-            String word = new String(word_byte, StandardCharsets.UTF_8).trim();
-            String word_befor = new String(word_befor_byte, StandardCharsets.UTF_8).trim();
+            String word = new String(word_byte, StandardCharsets.UTF_8).toLowerCase();
+            String word_befor = new String(word_befor_byte, StandardCharsets.UTF_8).toLowerCase();
 
-            if (word_befor.indexOf(tran) == -1 && word.indexOf(tran) == 0)
+            if ((word_befor).indexOf(tran) != 0 && (word).indexOf(tran) == 0)
             {
                 return middle*56;
             }
