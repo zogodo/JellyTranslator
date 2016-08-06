@@ -7,14 +7,15 @@ import android.os.Bundle;
 import android.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,13 +33,37 @@ public class MainActivity extends AppCompatActivity
                 + "/" + getPackageName() //包名
                 + "/files/dic/";//文件夹名
 
-        String ec_idx_file = APP_DOC_PATH + "e2c_idx.idx";
-        String ec_dic_file = APP_DOC_PATH + "e2c_dic.dict";
-        String ec_ifo_file = APP_DOC_PATH + "e2c_ifo.ifo";
+        String PACKAGE_NAME = getPackageName();
+        String packge_path = "/data" + Environment.getDataDirectory().getAbsolutePath() + "/"  + PACKAGE_NAME;
+        String dic_path = packge_path + "/dic";
 
-        String ce_idx_file = APP_DOC_PATH + "c2e_idx.idx";
-        String ce_dic_file = APP_DOC_PATH + "c2e_dic.dict";
-        String ce_ifo_file = APP_DOC_PATH + "c2e_ifo.ifo";
+        //English to Chinese dictionary
+        String ec_idx_file = dic_path + "/e2c_idx.idx";
+        String ec_dic_file = dic_path + "/e2c_dic.dict";
+        String ec_ifo_file = dic_path + "/e2c_ifo.ifo";
+        //Chinese to English dictionary
+        String ce_idx_file = dic_path + "/c2e_idx.idx";
+        String ce_dic_file = dic_path + "/c2e_dic.dict";
+        String ce_ifo_file = dic_path + "/c2e_ifo.ifo";
+
+        File dic_path_file = new File(dic_path);
+        if (!dic_path_file.exists())
+        {
+            dic_path_file.mkdir();
+            try
+            {
+                WriteDicFile(ec_idx_file, R.raw.e2c_idx);
+                WriteDicFile(ec_dic_file, R.raw.e2c_dic);
+                WriteDicFile(ec_ifo_file, R.raw.e2c_ifo);
+                WriteDicFile(ce_idx_file, R.raw.c2e_idx);
+                WriteDicFile(ce_dic_file, R.raw.c2e_dic);
+                WriteDicFile(ce_ifo_file, R.raw.c2e_inf);
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
 
         Long time0 = System.currentTimeMillis();
         try
@@ -159,5 +184,21 @@ public class MainActivity extends AppCompatActivity
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void WriteDicFile(String dic_file_name, int file_id) throws IOException
+    {
+        File dic_file = new File(dic_file_name);
+        InputStream stream = getResources().openRawResource(file_id);
+        dic_file.createNewFile();
+        FileOutputStream outputStream = new FileOutputStream(dic_file.getPath());
+        byte[] buffer = new byte[1024];
+        int count = 0;
+        while ((count = stream.read(buffer)) > 0)
+        {
+            outputStream.write(buffer, 0, count);
+        }
+        outputStream.close();
+        stream.close();
     }
 }
