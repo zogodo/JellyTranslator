@@ -1,9 +1,12 @@
 package com.zogodo.myempty;
 
+import android.content.Intent;
 import android.os.Environment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
@@ -19,6 +22,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -135,6 +139,26 @@ public class MainActivity extends AppCompatActivity
                 listItem, R.layout.simple_list_item_2, new String[]{"word", "meaning"},
                 new int[]{R.id.text1, R.id.text2});
         lv.setAdapter(mSimpleAdapter);
+
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //Toast.makeText(getApplicationContext(),"你单击的是第"+(position+1)+"条数据",Toast.LENGTH_SHORT).show();
+
+                Class<?> aClass = parent.getItemAtPosition(position).getClass();
+                HashMap word_meaning = (HashMap)parent.getItemAtPosition(position);
+                String word = word_meaning.get("word").toString();
+                String meaning = word_meaning.get("meaning").toString();
+
+                Intent intent = new Intent(MainActivity.this, WordDetail.class);
+                intent.putExtra("word", word);
+                intent.putExtra("meaning", meaning);
+                //打开新窗口
+                startActivity(intent);
+
+                setResult(RESULT_OK,intent);
+                //finish();
+            }
+        });
     }
 
     public boolean onCreateOptionsMenu(Menu menu)
