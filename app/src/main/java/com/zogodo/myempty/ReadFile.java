@@ -18,7 +18,6 @@ public class ReadFile
         RandomAccessFile randomFile = new RandomAccessFile(fileName, "r");
         byte[] file_bytes = new byte[(int)file.length()];
         randomFile.read(file_bytes, 0, (int)file.length());
-
         return file_bytes;
     }
 
@@ -37,12 +36,10 @@ public class ReadFile
         BufferedReader reader = null;
         String[] file_string = new String[fileLines];
         reader = new BufferedReader(new FileReader(file));
-        file_string[0] = new String();
-        int i = 0;
-        while (i < fileLines)
+        for (int i = 0; i < fileLines; i++)
         {
-            file_string[i++] = new String();
-            file_string[i - 1] = reader.readLine();
+            file_string[i] = new String();
+            file_string[i] = reader.readLine();
         }
         reader.close();
         return file_string;

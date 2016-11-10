@@ -18,12 +18,13 @@ public class StarDict
         {
             if (word_count_info.indexOf("wordcount=") == 0)
             {
+                //获取单词数量
                 word_count_info = word_count_info.substring(10);
                 this.word_count = Integer.parseInt(word_count_info);
             }
-            //info_string[2] = info_string[2].substring(10);
         }
 
+        //对齐索引文件
         File align_idx_file = new File(idx_file_path + "_align");
         if (align_idx_file.exists())
         {
@@ -38,6 +39,7 @@ public class StarDict
             fos.close();
         }
 
+        //字典内容
         this.dic_file = new RandomAccessFile(dic_file_path, "r");
     }
 
@@ -48,7 +50,6 @@ public class StarDict
     public byte[] GetAllIndexItems(String idx_file) throws IOException
     {
         byte[] file_bytes = ReadFile.readFileByByte(idx_file);
-
         byte[] index_file_align = new byte[this.word_count * 56];
 
         for (int i = 0, j = 0, w = 0; w < this.word_count; w++)
@@ -75,14 +76,16 @@ public class StarDict
 
     public int to_int(byte[] bytes)
     {
-        return   ((int) bytes[0] & 0x0FF) * 65536 * 256
-                + ((int) bytes[1] & 0x0FF) * 65536
-                + ((int) bytes[2] & 0x0FF) * 256
-                + ((int) bytes[3] & 0x0FF);
+        return  ((int) bytes[0] & 0x0FF) * 65536 * 256
+              + ((int) bytes[1] & 0x0FF) * 65536
+              + ((int) bytes[2] & 0x0FF) * 256
+              + ((int) bytes[3] & 0x0FF);
     }
 
     public int GetWordStart(String tran)
     {
+        //二分法查找索引文件
+
         tran = tran.toLowerCase();
 
         int low = 0;
