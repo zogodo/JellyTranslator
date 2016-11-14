@@ -13,7 +13,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -22,7 +21,6 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -82,9 +80,16 @@ public class MainActivity extends AppCompatActivity
         Log.e("22222", ((Long)(System.currentTimeMillis() - time0)).toString());
     }
 
+    protected void onRestart() {
+        super.onRestart();
+        SearchView search_view = (SearchView)findViewById(R.id.search);
+        search_view.setQuery(word_now, false);
+    }
+
     StarDict ec_dic;
     StarDict ce_dic;
     StarDict dic_now;
+    String word_now;
 
     public void updateListView(String tran) throws IOException
     {
@@ -146,11 +151,11 @@ public class MainActivity extends AppCompatActivity
 
                 Class<?> aClass = parent.getItemAtPosition(position).getClass();
                 HashMap word_meaning = (HashMap)parent.getItemAtPosition(position);
-                String word = word_meaning.get("word").toString();
+                word_now = word_meaning.get("word").toString();
                 String meaning = word_meaning.get("meaning").toString();
 
                 Intent intent = new Intent(MainActivity.this, WordDetail.class);
-                intent.putExtra("word", word);
+                intent.putExtra("word", word_now);
                 intent.putExtra("meaning", meaning);
                 //打开新窗口
                 startActivity(intent);
@@ -200,10 +205,19 @@ public class MainActivity extends AppCompatActivity
 
     public boolean onOptionsItemSelected(MenuItem item)
     {
+        Intent intent = null;
         switch (item.getItemId())
         {
             case R.id.about:
-                Toast.makeText(this, "关于", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, "关于", Toast.LENGTH_SHORT).show();
+                intent = new Intent(MainActivity.this, About.class);
+                startActivity(intent);
+                setResult(RESULT_OK,intent);
+                return true;
+            case R.id.downloadDict:
+                intent = new Intent(MainActivity.this, AllDict.class);
+                startActivity(intent);
+                setResult(RESULT_OK,intent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

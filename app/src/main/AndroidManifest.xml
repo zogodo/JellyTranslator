@@ -2,6 +2,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.zogodo.myempty">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+    <receiver android:name=".CompleteReceiver">
+        <intent-filter>
+            <action android:name="android.intent.action.DOWNLOAD_COMPLETE"/>
+            <action android:name="android.intent.action.DOWNLOAD_NOTIFICATION_CLICKED"/>
+        </intent-filter>
+    </receiver>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -16,6 +26,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".WordDetail">
+        </activity>
+        <activity android:name=".About">
+        </activity>
+        <activity android:name=".AllDict">
         </activity>
     </application>
 
