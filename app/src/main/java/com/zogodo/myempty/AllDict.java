@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
@@ -45,17 +44,13 @@ public class AllDict extends AppCompatActivity
     public void updateListView() throws IOException
     {
         ListView lv = (ListView) findViewById(R.id.listView2);
-
         ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String, Object>>();
-
-        int i = 0;
-        while(i < 333)
+        for (int i = 0; i < 333; i += 3)
         {
             HashMap<String, Object> map = new HashMap<String, Object>();
             map.put("dic_name", cn_dic_list[i]);
             map.put("dic_info", cn_dic_list[i + 2]);
             listItem.add(map);
-            i += 3;
         }
 
         SimpleAdapter mSimpleAdapter = new SimpleAdapter(this,
@@ -65,13 +60,16 @@ public class AllDict extends AppCompatActivity
 
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
+            //单击ListView Item
             public void onItemClick(AdapterView<?> parent, View view, int position, long id)
             {
                 Toast.makeText(getApplicationContext(), "长按下载此字典", Toast.LENGTH_SHORT).show();
             }
         });
+
         lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener()
         {
+            //长按ListView Item
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id)
             {
                 String file_url = cn_dic_list[position*3 + 1];
@@ -94,27 +92,9 @@ public class AllDict extends AppCompatActivity
     {
         public void onClick(View arg0)
         {
-            //解压...
-            String dic_path = "/mnt/sdcard/Android/data/com.zogodo.jelly/files/dict/";
-            String cmd = "ls " + dic_path;
-            cmd = "tar -xjvf "+dic_path+"stardict-stardict1.3-2.4.2.tar.bz2 -C "+dic_path;
-            Runtime runtime = Runtime.getRuntime();
             try
             {
-                //执行命令，并且获得Process对象
-                Process process = runtime.exec(cmd);
-                //获得结果的输入流
-                InputStream input = process.getInputStream();
-                BufferedReader br = new BufferedReader(new InputStreamReader(input));
-                String strLine;
-                String str = "";
-                while (null != (strLine = br.readLine()))
-                {
-                    System.out.println(strLine);
-                    str += (strLine + "\n");
-                }
-                TextView test_text = (TextView)findViewById(R.id.textView);
-                test_text.setText(str);
+                exportBz2FIle("stardict-stardict1.3-2.4.2.tar.bz2");
             }
             catch (IOException e)
             {
@@ -125,7 +105,7 @@ public class AllDict extends AppCompatActivity
 
     public void exportBz2FIle(String bz2_file_name) throws IOException
     {
-        //解压...
+        //解压 .tar.bz2 文件
         String dic_path = "/mnt/sdcard/Android/data/com.zogodo.jelly/files/dict/";
         String cmd = "ls " + dic_path;
         cmd = "tar -xjvf " + dic_path + bz2_file_name + " -C " + dic_path;
@@ -136,20 +116,11 @@ public class AllDict extends AppCompatActivity
         //获得结果的输入流
         InputStream input = process.getInputStream();
         BufferedReader br = new BufferedReader(new InputStreamReader(input));
-
-        String strLine;
-        String str = "";
-        while (null != (strLine = br.readLine()))
-        {
-            System.out.println(strLine);
-            str += (strLine + "\n");
-        }
-        TextView test_text = (TextView)findViewById(R.id.textView);
-        test_text.setText(str);
     }
 
     protected long DownloadDict(String file_url)
     {
+        //下载字典文件
         DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
         Uri uri = Uri.parse(file_url);
         DownloadManager.Request request = new DownloadManager.Request(uri);
@@ -163,8 +134,28 @@ public class AllDict extends AppCompatActivity
         return down_id;
     }
 
+    public String[] getCmdReadLine(String cmd) throws IOException
+    {
+        Runtime runtime = Runtime.getRuntime();
+        //执行命令，并且获得Process对象
+        Process process = runtime.exec(cmd);
+        //获得结果的输入流
+        InputStream input = process.getInputStream();
+        BufferedReader br = new BufferedReader(new InputStreamReader(input));
+        String strLine = br.readLine();
+        String[] cmd_str = new String[100];
+        for (int i = 0; i < 100 && strLine != null; i++)
+        {
+            cmd_str[i] = new String();
+            cmd_str[i] = strLine;
+            strLine = br.readLine();
+        }
+        return cmd_str;
+    }
+
     public String[] readTextFileByLinesFromRaw(int file_id) throws IOException
     {
+        //从raw中读取文本文件
         InputStream stream = getResources().openRawResource(file_id);
         InputStreamReader isReader = new InputStreamReader(stream, "UTF-8");
         //int file_lines = getFileLines(stream);
@@ -182,8 +173,9 @@ public class AllDict extends AppCompatActivity
 
     public int getFileLines(InputStream stream) throws IOException
     {
+        //获取文件行数
         byte[] c = new byte[1024];
-        int count = 0;
+        int count = 1;
         int readChars = 0;
         while ((readChars = stream.read(c)) != -1)
         {
