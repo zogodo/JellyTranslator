@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
 
@@ -43,5 +44,24 @@ public class ReadFile
         }
         reader.close();
         return file_string;
+    }
+
+    public int getFileLines(InputStream stream) throws IOException
+    {
+        //获取文件行数
+        byte[] c = new byte[1024];
+        int count = 1;
+        int readChars = 0;
+        while ((readChars = stream.read(c)) != -1)
+        {
+            for (int i = 0; i < readChars; ++i)
+            {
+                if (c[i] == '\n')
+                {
+                    ++count;
+                }
+            }
+        }
+        return count;
     }
 }

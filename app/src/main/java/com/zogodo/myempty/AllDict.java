@@ -26,9 +26,6 @@ public class AllDict extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_dict);
 
-        findViewById(R.id.button2).setOnClickListener(new HandleClick1());
-        findViewById(R.id.button3).setOnClickListener(new HandleClick2());
-
         try
         {
             cn_dic_list = readTextFileByLinesFromRaw(R.raw.cn_dic_list);
@@ -79,45 +76,6 @@ public class AllDict extends AppCompatActivity
         });
     }
 
-    private class HandleClick1 implements View.OnClickListener
-    {
-        public void onClick(View arg0)
-        {
-            String file_url = "http://download.huzheng.org/zh_CN/stardict-stardict1.3-2.4.2.tar.bz2";
-            DownloadDict(file_url);
-        }
-    }
-
-    private class HandleClick2 implements View.OnClickListener
-    {
-        public void onClick(View arg0)
-        {
-            try
-            {
-                exportBz2FIle("stardict-stardict1.3-2.4.2.tar.bz2");
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void exportBz2FIle(String bz2_file_name) throws IOException
-    {
-        //解压 .tar.bz2 文件
-        String dic_path = "/mnt/sdcard/Android/data/com.zogodo.jelly/files/dict/";
-        String cmd = "ls " + dic_path;
-        cmd = "tar -xjvf " + dic_path + bz2_file_name + " -C " + dic_path;
-        Runtime runtime = Runtime.getRuntime();
-
-        //执行命令，并且获得Process对象
-        Process process = runtime.exec(cmd);
-        //获得结果的输入流
-        InputStream input = process.getInputStream();
-        BufferedReader br = new BufferedReader(new InputStreamReader(input));
-    }
-
     protected long DownloadDict(String file_url)
     {
         //下载字典文件
@@ -132,25 +90,6 @@ public class AllDict extends AppCompatActivity
         long down_id = downloadManager.enqueue(request);
         //TODO 把id保存好，在接收者里面要用，最好保存在Preferences里面
         return down_id;
-    }
-
-    public String[] getCmdReadLine(String cmd) throws IOException
-    {
-        Runtime runtime = Runtime.getRuntime();
-        //执行命令，并且获得Process对象
-        Process process = runtime.exec(cmd);
-        //获得结果的输入流
-        InputStream input = process.getInputStream();
-        BufferedReader br = new BufferedReader(new InputStreamReader(input));
-        String strLine = br.readLine();
-        String[] cmd_str = new String[100];
-        for (int i = 0; i < 100 && strLine != null; i++)
-        {
-            cmd_str[i] = new String();
-            cmd_str[i] = strLine;
-            strLine = br.readLine();
-        }
-        return cmd_str;
     }
 
     public String[] readTextFileByLinesFromRaw(int file_id) throws IOException
@@ -169,25 +108,6 @@ public class AllDict extends AppCompatActivity
         }
         reader.close();
         return file_string;
-    }
-
-    public int getFileLines(InputStream stream) throws IOException
-    {
-        //获取文件行数
-        byte[] c = new byte[1024];
-        int count = 1;
-        int readChars = 0;
-        while ((readChars = stream.read(c)) != -1)
-        {
-            for (int i = 0; i < readChars; ++i)
-            {
-                if (c[i] == '\n')
-                {
-                    ++count;
-                }
-            }
-        }
-        return count;
     }
 
 }
