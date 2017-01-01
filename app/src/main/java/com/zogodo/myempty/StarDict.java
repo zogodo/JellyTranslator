@@ -1,8 +1,10 @@
 package com.zogodo.myempty;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
 
@@ -11,16 +13,79 @@ import java.nio.charset.StandardCharsets;
  */
 public class StarDict
 {
+    public int wordcount;
+    public int idxfilesize;
+    public String version;
+    public String bookname;
+    public String author;
+    public String email;
+    public String description;
+    public String date;
+    public String sametypesequence;
+    public String idx_file_path;
+    public String dic_file_path;
+    public String info_file_path;
+    public byte[] index_file_align;
+    public RandomAccessFile dic_file;
+    private static final int word_witdh = 48;
+
     StarDict(String idx_file_path, String dic_file_path, String info_file_path) throws IOException
     {
-        String info_string[] = ReadFile.readFileByLines(info_file_path, 6);
-        for (String word_count_info : info_string)
+        this.info_file_path = info_file_path;
+        this.idx_file_path = idx_file_path;
+        this.dic_file_path = dic_file_path;
+        String[] info_string = ReadFile.readFileByLines(info_file_path, 15);
+        for (String info_item : info_string)
         {
-            if (word_count_info.indexOf("wordcount=") == 0)
+            //获取字典信息
+            if (info_item == null)
             {
-                //获取单词数量
-                word_count_info = word_count_info.substring(10);
-                this.word_count = Integer.parseInt(word_count_info);
+                break;
+            }
+            else if (info_item.indexOf("wordcount") == 0)
+            {
+                info_item = info_item.split("=")[1];
+                this.wordcount = Integer.parseInt(info_item);
+            }
+            else if (info_item.indexOf("idxfilesize") == 0)
+            {
+                info_item = info_item.split("=")[1];
+                this.idxfilesize = Integer.parseInt(info_item);
+            }
+            else if (info_item.indexOf("version") == 0)
+            {
+                info_item = info_item.split("=")[1];
+                this.version = info_item;
+            }
+            else if (info_item.indexOf("bookname") == 0)
+            {
+                info_item = info_item.split("=")[1];
+                this.bookname = info_item;
+            }
+            else if (info_item.indexOf("author") == 0)
+            {
+                info_item = info_item.split("=")[1];
+                this.author = info_item;
+            }
+            else if (info_item.indexOf("email") == 0)
+            {
+                info_item = info_item.split("=")[1];
+                this.email = info_item;
+            }
+            else if (info_item.indexOf("description") == 0)
+            {
+                info_item = info_item.split("=")[1];
+                this.description = info_item;
+            }
+            else if (info_item.indexOf("date") == 0)
+            {
+                info_item = info_item.split("=")[1];
+                this.date = info_item;
+            }
+            else if (info_item.indexOf("sametypesequence") == 0)
+            {
+                info_item = info_item.split("=")[1];
+                this.sametypesequence = info_item;
             }
         }
 
@@ -40,28 +105,24 @@ public class StarDict
         }
 
         //字典内容
-        this.dic_file = new RandomAccessFile(dic_file_path, "r");
+        this.dic_file = new RandomAccessFile(dic_file_path, "rw");
     }
-
-    public int word_count;
-    public byte[] index_file_align;
-    public RandomAccessFile dic_file;
 
     public byte[] GetAllIndexItems(String idx_file) throws IOException
     {
         byte[] file_bytes = ReadFile.readFileByByte(idx_file);
-        byte[] index_file_align = new byte[this.word_count * 56];
+        byte[] index_file_align = new byte[this.wordcount * (word_witdh + 8)];
 
-        for (int i = 0, j = 0, w = 0; w < this.word_count; w++)
+        for (int i = 0, j = 0, w = 0; w < this.wordcount; w++)
         {
-            while (file_bytes[i] != 0 && j%56 < 48)
+            while (file_bytes[i] != 0 && j%(word_witdh + 8) < word_witdh)
             {
                 //记录单词
                 index_file_align[j] = file_bytes[i];
                 j++;
                 i++;
             }
-            j = j + (48 - j%56);
+            j = j + (word_witdh - j%(word_witdh + 8));
             i++;
 
             for (int k = 0; k < 8; k++, j++, i++)
@@ -89,7 +150,7 @@ public class StarDict
         tran = tran.toLowerCase();
 
         int low = 0;
-        int high = this.index_file_align.length/56 - 1;
+        int high = this.index_file_align.length/(word_witdh + 8) - 1;
 
         while (low <= high)
         {
@@ -99,17 +160,17 @@ public class StarDict
                 return 0;
             }
 
-            byte[] word_byte = new byte[48];
-            System.arraycopy(this.index_file_align, middle*56, word_byte, 0, 48);
-            byte[] word_befor_byte = new byte[48];
-            System.arraycopy(this.index_file_align, middle*56 - 56, word_befor_byte, 0, 48);
+            byte[] word_byte = new byte[word_witdh];
+            System.arraycopy(this.index_file_align, middle*(word_witdh + 8), word_byte, 0, word_witdh);
+            byte[] word_befor_byte = new byte[word_witdh];
+            System.arraycopy(this.index_file_align, middle*(word_witdh + 8) - (word_witdh + 8), word_befor_byte, 0, word_witdh);
 
             String word = new String(word_byte, StandardCharsets.UTF_8).toLowerCase();
             String word_befor = new String(word_befor_byte, StandardCharsets.UTF_8).toLowerCase();
 
             if ((word_befor).indexOf(tran) != 0 && (word).indexOf(tran) == 0)
             {
-                return middle*56;
+                return middle*(word_witdh + 8);
             }
             if (tran.compareTo(word) < 0)
             {
@@ -126,12 +187,69 @@ public class StarDict
     public String GetMeaningOfWord(int index) throws IOException
     {
         byte[] offset_byte = new byte[4];
-        System.arraycopy(this.index_file_align, index + 48, offset_byte, 0, 4);
+        System.arraycopy(this.index_file_align, index + word_witdh, offset_byte, 0, 4);
         byte[] length_byte = new byte[4];
-        System.arraycopy(this.index_file_align, index + 52, length_byte, 0, 4);
+        System.arraycopy(this.index_file_align, index + (word_witdh + 4), length_byte, 0, 4);
 
         int offset = to_int(offset_byte);
         int length = to_int(length_byte);
         return ReadFile.readFileByOffset(this.dic_file, offset, length);
+    }
+
+    public byte[] MergeIndex(byte[] index_file_align)
+    {
+        int total_index_size = this.index_file_align.length + index_file_align.length;
+        byte[] merge_index = new byte[total_index_size];
+        int i = 0, j = 0, k = 0;
+        byte[] word_byte1 = new byte[word_witdh];
+        byte[] word_byte2 = new byte[word_witdh];
+        String word1, word2;
+        while(i < this.index_file_align.length && j < index_file_align.length)
+        {
+            System.arraycopy(this.index_file_align, i, word_byte1, 0, word_witdh);
+            System.arraycopy(index_file_align, i, word_byte2, 0, word_witdh);
+            word1 = new String(word_byte1, StandardCharsets.UTF_8).toLowerCase();
+            word2 = new String(word_byte2, StandardCharsets.UTF_8).toLowerCase();
+            if (word1.compareTo(word2) < 0)
+            {
+                for (int ii = 0; ii < (word_witdh + 8); ii++)
+                {
+                    merge_index[i++] = word_byte1[i++];
+                }
+            }
+            else
+            {
+                for (int ii = 0; ii < (word_witdh + 8); ii++)
+                {
+                    merge_index[i++] = word_byte2[j++];
+                }
+            }
+        }
+        return merge_index;
+    }
+
+    public void AddDic(StarDict add_from) throws IOException
+    {
+        //合并信息文件
+        File file = new File(info_file_path);
+        PrintStream ps = new PrintStream(new FileOutputStream(file));
+        ps.println("StarDict's dict ifo file");
+        ps.println("version=" + version + "|" + add_from.version);
+        ps.println("wordcount=" + (wordcount + add_from.wordcount));
+        ps.println("idxfilesize=" + (idxfilesize + add_from.idxfilesize));
+        ps.println("bookname=" + bookname + "|" + add_from.bookname);
+        ps.println("author=" + author + "|" + add_from.author);
+        ps.println("email=" + email + "|" + add_from.email);
+        ps.println("description=" + description + "|" + add_from.description);
+        ps.println("date=" + date + "|" + add_from.date);
+        ps.println("sametypesequence=" + sametypesequence + "|" + add_from.sametypesequence);
+        ps.close();
+
+        //合并索引
+        index_file_align = MergeIndex(add_from.index_file_align);
+
+        //合并内容文件
+        ReadFile.AppendToEnd(dic_file, add_from.dic_file);
+        //dic_file.close();
     }
 }

@@ -1,11 +1,6 @@
 package com.zogodo.myempty;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -19,6 +14,13 @@ public class ReadFile
         RandomAccessFile randomFile = new RandomAccessFile(fileName, "r");
         byte[] file_bytes = new byte[(int)file.length()];
         randomFile.read(file_bytes, 0, (int)file.length());
+        return file_bytes;
+    }
+
+    public static byte[] readFileByByte(RandomAccessFile randomFile) throws IOException
+    {
+        byte[] file_bytes = new byte[(int)randomFile.length()];
+        randomFile.read(file_bytes, 0, (int)randomFile.length());
         return file_bytes;
     }
 
@@ -41,6 +43,10 @@ public class ReadFile
         {
             file_string[i] = new String();
             file_string[i] = reader.readLine();
+            if (file_string[i] == null)
+            {
+                break;
+            }
         }
         reader.close();
         return file_string;
@@ -63,5 +69,30 @@ public class ReadFile
             }
         }
         return count;
+    }
+
+    public static void AppendToEnd(RandomAccessFile append_to, RandomAccessFile append_from) throws IOException
+    {
+        //文件长度，字节数
+        long fileLength = append_to.length();
+        //将写文件指针移到文件尾。
+        append_to.seek(fileLength);
+        byte[] content = readFileByByte(append_from);
+        append_to.write(content);
+    }
+
+    public static void UpdateFile(String file_name, byte[] content) throws IOException
+    {
+        RandomAccessFile randomFile = new RandomAccessFile(file_name, "rw");
+        randomFile.write(content);
+    }
+
+    public static void WriteStringToFile(String txt_file_path, String content) throws IOException
+    {
+        FileWriter fw = new FileWriter(txt_file_path, true);
+        BufferedWriter bw = new BufferedWriter(fw);
+        bw.append(content);// 往已有的文件上添加字符串
+        bw.close();
+        fw.close();
     }
 }
