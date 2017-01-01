@@ -26,14 +26,16 @@ public class CompleteReceiver extends BroadcastReceiver
         {
             Toast.makeText(context, "下载完成了....", Toast.LENGTH_LONG).show();
 
-            long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);                                                                                      //TODO 判断这个id与之前的id是否相等，如果相等说明是之前的那个要下载的文件
+            long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
+            //TODO 判断这个id与之前的id是否相等，如果相等说明是之前的那个要下载的文件
             Query query = new Query();
             query.setFilterById(id);
             downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
             Cursor cursor = downloadManager.query(query);
 
             int columnCount = cursor.getColumnCount();
-            String path = null;                                                                                                                                       //TODO 这里把所有的列都打印一下，有什么需求，就怎么处理,文件的本地路径就是path
+            String path = null;
+            //TODO 这里把所有的列都打印一下，有什么需求，就怎么处理,文件的本地路径就是path
             while (cursor.moveToNext())
             {
                 for (int j = 0; j < columnCount; j++)
@@ -54,7 +56,8 @@ public class CompleteReceiver extends BroadcastReceiver
                 }
             }
             cursor.close();
-            //如果sdcard不可用时下载下来的文件，那么这里将是一个内容提供者的路径，这里打印出来，有什么需求就怎么样处理                                                   if(path.startsWith("content:")) {
+            //如果sdcard不可用时下载下来的文件，那么这里将是一个内容提供者的路径，这里打印出来，有什么需求就怎么样处理
+            // if(path.startsWith("content:")) {
             cursor = context.getContentResolver().query(Uri.parse(path), null, null, null, null);
             columnCount = cursor.getColumnCount();
             while (cursor.moveToNext())

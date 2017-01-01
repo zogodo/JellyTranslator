@@ -40,9 +40,7 @@ public class DownloadCompleteReceiver extends BroadcastReceiver
             {
                 LinuxCmd.exportBz2FIle(file_path);
                 StarDict add_dic = new StarDict(
-                        "/mnt/sdcard/Android/data/com.zogodo.jelly/files/dict/" + file_name + ".idx",
-                        "/mnt/sdcard/Android/data/com.zogodo.jelly/files/dict/" + file_name + ".dict",
-                        "/mnt/sdcard/Android/data/com.zogodo.jelly/files/dict/" + file_name + ".ifo");
+                        "/mnt/sdcard/Android/data/com.zogodo.jelly/files/dict/", file_name);
                 MainActivity.ec_dic.AddDic(add_dic);
                 Toast.makeText(context, "字典添加成功。", Toast.LENGTH_LONG).show();
             }

@@ -15,7 +15,6 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -64,21 +63,21 @@ public class MainActivity extends AppCompatActivity
         Long time0 = System.currentTimeMillis();
         try
         {
-            ec_dic = new StarDict(ec_idx_file, ec_dic_file, ec_ifo_file);
+            ec_dic = new StarDict(dic_path + "/", "all_dic");
         }
         catch (IOException e)
         {
             e.printStackTrace();
         }
 
-        try
-        {
-            ec_dic.AddDic(ec_dic);
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+//        try
+//        {
+//            ec_dic.AddDic(ec_dic);
+//        }
+//        catch (IOException e)
+//        {
+//            e.printStackTrace();
+//        }
 
         Log.e("22222", ((Long)(System.currentTimeMillis() - time0)).toString());
     }
