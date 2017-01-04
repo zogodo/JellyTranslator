@@ -111,22 +111,22 @@ public class StarDict
         }
 
         //对齐索引文件
-        File align_idx_file = new File(idx_file_path + "_align");
+        File align_idx_file = new File(this.idx_file_path + "_align");
         if (align_idx_file.exists())
         {
-            this.index_file_align = ReadFile.readFileByByte(idx_file_path + "_align");
+            this.index_file_align = ReadFile.readFileByByte(this.idx_file_path + "_align");
         }
         else
         {
-            this.index_file_align = this.GetAllIndexItems(idx_file_path);
+            this.index_file_align = this.GetAllIndexItems(this.idx_file_path);
 
-            FileOutputStream fos = new FileOutputStream(idx_file_path + "_align");
+            FileOutputStream fos = new FileOutputStream(this.idx_file_path + "_align");
             fos.write(this.index_file_align);
             fos.close();
         }
 
         //字典内容
-        this.dic_file = new RandomAccessFile(dic_file_path, "rw");
+        this.dic_file = new RandomAccessFile(this.dic_file_path, "rw");
         this.dicfilesize = (int)dic_file.length();
     }
 
@@ -136,7 +136,7 @@ public class StarDict
         byte[] file_bytes = ReadFile.readFileByByte(idx_file);
         byte[] index_file_align = new byte[this.wordcount * index_width];
 
-        for (int i = 0, j = 0, w = 0; w < this.wordcount; w++)
+        for (int i = 0, j = 0, w = 0; w < this.wordcount && i < file_bytes.length; w++)
         {
             while (file_bytes[i] != 0 && j%index_width < word_width)
             {
@@ -316,11 +316,15 @@ public class StarDict
         ps.close();
 
         //合并索引
-        index_file_align = MergeIndex(add_from);
-        ReadFile.UpdateFile(idx_file_path + "_align", index_file_align);
+        this.index_file_align = MergeIndex(add_from);
+        ReadFile.UpdateFile(idx_file_path + "_align", this.index_file_align);
 
         //合并内容文件
-        ReadFile.AppendToEnd(dic_file, add_from.dic_file);
+        ReadFile.AppendToEnd(this.dic_file, add_from.dic_file);
+        //重新打开文件，并刷新缓存
+        this.dic_file.close();
+        this.dic_file = new RandomAccessFile(this.dic_file_path, "rw");
+
         dicfilesize += add_from.dicfilesize;
     }
 
@@ -341,7 +345,7 @@ public class StarDict
             word.word = new String(word.word_byte, StandardCharsets.UTF_8);
             word.meaning = this.GetMeaningOfWord(start);
 
-            System.out.println(start/56+1 + "\t" + word.word + "\t" + word.meaning.replaceAll("\n", " "));
+            System.out.println(start/56+1 + "\t" + word.word + "|" + word.meaning.replaceAll("\n", " "));
         }
     }
 
@@ -357,12 +361,13 @@ public class StarDict
             word.word = new String(word.word_byte, StandardCharsets.UTF_8);
             word.meaning = this.GetMeaningOfWord(start);
 
-            one_word = start/56+1 + " " + word.word.trim() + word.meaning.replaceAll("\n", " ") + "\r\n";
+            one_word = word.word.trim() + "\t" + word.meaning.replaceAll("\n", " ") + "\r\n";
             if(i%5000 == 0 || i == this.wordcount)
             {
-                System.out.println(start/56+1);
+                System.out.println(start/56);
             }
             ReadFile.WriteStringToFile(txt_file_path, one_word);
         }
     }
+
 }

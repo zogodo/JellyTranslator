@@ -74,10 +74,10 @@ public class ReadFile
     public static void AppendToEnd(RandomAccessFile append_to, RandomAccessFile append_from) throws IOException
     {
         //文件长度，字节数
+        byte[] content = readFileByByte(append_from);
         long fileLength = append_to.length();
         //将写文件指针移到文件尾。
         append_to.seek(fileLength);
-        byte[] content = readFileByByte(append_from);
         append_to.write(content);
     }
 
