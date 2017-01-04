@@ -39,9 +39,20 @@ public class DownloadCompleteReceiver extends BroadcastReceiver
             try
             {
                 String[] result = LinuxCmd.exportBz2FIle(file_path);
+                String dic_name = GetDicFileName(result);
+                // 重命名字典内容文件 .dz -> .gz
+                String cmd = "mv " + MainActivity.sd_dic_path + result[0]
+                        + dic_name + ".dict.dz "
+                        + MainActivity.sd_dic_path + result[0] + dic_name + ".dict.gz";
+                LinuxCmd.PerformCmd(cmd);
+                // 解压字典内容文件
+                cmd = "gzip -d " + MainActivity.sd_dic_path + result[0]
+                        + dic_name + ".dict.gz -C "
+                        + MainActivity.sd_dic_path + result[0];
+                LinuxCmd.PerformCmd(cmd);
                 StarDict add_dic = new StarDict(
                         MainActivity.sd_dic_path + result[0],
-                        GetDicFileName(result));
+                        dic_name);
                 MainActivity.ec_dic.AddDic(add_dic);
                 Toast.makeText(context, "字典添加成功。", Toast.LENGTH_LONG).show();
             }
