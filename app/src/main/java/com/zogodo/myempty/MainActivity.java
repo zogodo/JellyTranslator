@@ -89,6 +89,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public static StarDict ec_dic;
+    public static String sd_dic_path = "/mnt/sdcard/Android/data/com.zogodo.jelly/files/dict/";
     String word_now;
 
     public void updateListView(String tran) throws IOException

@@ -38,9 +38,10 @@ public class DownloadCompleteReceiver extends BroadcastReceiver
             //解压下载的文件
             try
             {
-                LinuxCmd.exportBz2FIle(file_path);
+                String[] result = LinuxCmd.exportBz2FIle(file_path);
                 StarDict add_dic = new StarDict(
-                        "/mnt/sdcard/Android/data/com.zogodo.jelly/files/dict/", file_name);
+                        MainActivity.sd_dic_path + result[0],
+                        GetDicFileName(result));
                 MainActivity.ec_dic.AddDic(add_dic);
                 Toast.makeText(context, "字典添加成功。", Toast.LENGTH_LONG).show();
             }
@@ -49,5 +50,23 @@ public class DownloadCompleteReceiver extends BroadcastReceiver
                 e.printStackTrace();
             }
         }
+    }
+
+    public String GetDicFileName(String[] result)
+    {
+        String dic_name = result[1].replaceAll(result[0], "");
+        if(dic_name.indexOf(".dict.dz") >= 0)
+        {
+            dic_name = dic_name.replaceAll(".dict.dz", "");
+        }
+        else if(dic_name.indexOf(".idx") >= 0)
+        {
+            dic_name = dic_name.replaceAll(".idx", "");
+        }
+        else if(dic_name.indexOf(".ifo") >= 0)
+        {
+            dic_name = dic_name.replaceAll(".ifo", "");
+        }
+        return dic_name;
     }
 }
