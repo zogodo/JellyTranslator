@@ -70,22 +70,13 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }
 
-//        try
-//        {
-//            ec_dic.AddDic(ec_dic);
-//        }
-//        catch (IOException e)
-//        {
-//            e.printStackTrace();
-//        }
-
         Log.e("22222", ((Long)(System.currentTimeMillis() - time0)).toString());
     }
 
     protected void onRestart() {
         super.onRestart();
         SearchView search_view = (SearchView)findViewById(R.id.search);
-        search_view.setQuery(word_now, false);
+        //search_view.setQuery(word_now, false);
     }
 
     public static StarDict ec_dic;
@@ -118,7 +109,7 @@ public class MainActivity extends AppCompatActivity
         while(i < 100 && word.toLowerCase().indexOf(tran) == 0)
         {
             String meaning = ec_dic.GetMeaningOfWord(start + i*56);
-            meaning = meaning.replaceAll(" *\n *", " ");
+            meaning = meaning.replaceAll("\\s+", " ");
             //meaning = meaning.replaceAll("^t(.+?)m", "[ $1 ] ");
             //meaning = meaning.replaceAll("^m", "");
             //meaning = meaning.replaceAll(" ([a-z]{1,7}\\.)", "\n$1 ");

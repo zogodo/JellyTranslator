@@ -34,7 +34,7 @@ public class MyDict extends AppCompatActivity
         ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String, Object>>();
         String[] my_dic_list = MainActivity.ec_dic.bookname.split("\\|");
         String[] my_dic_list_info = MainActivity.ec_dic.description.split("\\|");
-        for (int i = 0; i < my_dic_list.length; i += 3)
+        for (int i = 0; i < my_dic_list.length; i++)
         {
             HashMap<String, Object> map = new HashMap<String, Object>();
             map.put("dic_name", my_dic_list[i]);
