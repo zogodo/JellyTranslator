@@ -76,12 +76,12 @@ public class MainActivity extends AppCompatActivity
     protected void onRestart() {
         super.onRestart();
         SearchView search_view = (SearchView)findViewById(R.id.search);
-        //search_view.setQuery(word_now, false);
+        //search_view.setQuery(word_now.word, false);
     }
 
     public static StarDict ec_dic;
     public static String sd_dic_path = "/mnt/sdcard/Android/data/com.zogodo.jelly/files/dict/";
-    String word_now;
+    OneWord word_now;
 
     public void updateListView(String tran) throws IOException
     {
@@ -102,13 +102,13 @@ public class MainActivity extends AppCompatActivity
 
         ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String, Object>>();
         int i = 0;
-        byte[] word_byte = new byte[48];
-        System.arraycopy(ec_dic.index_file_align, start + i*56, word_byte, 0, 48);
-        String word = new String(word_byte, StandardCharsets.UTF_8).trim();
+        word_now.word_byte = new byte[StarDict.word_width];
+        System.arraycopy(ec_dic.index_file_align, start + i*StarDict.index_width, word_now.word_byte, 0, StarDict.word_width);
+        String word = new String(word_now.word_byte, StandardCharsets.UTF_8).trim();
 
         while(i < 100 && word.toLowerCase().indexOf(tran) == 0)
         {
-            String meaning = ec_dic.GetMeaningOfWord(start + i*56);
+            String meaning = ec_dic.GetMeaningOfWord(start + i*StarDict.index_width);
             meaning = meaning.replaceAll("\\s+", " ");
             //meaning = meaning.replaceAll("^t(.+?)m", "[ $1 ] ");
             //meaning = meaning.replaceAll("^m", "");
@@ -121,8 +121,8 @@ public class MainActivity extends AppCompatActivity
             listItem.add(map);
             i++;
 
-            System.arraycopy(ec_dic.index_file_align, start + i*56, word_byte, 0, 48);
-            word = new String(word_byte, StandardCharsets.UTF_8).trim();
+            System.arraycopy(ec_dic.index_file_align, start + i*StarDict.index_width, word_now.word_byte, 0, StarDict.word_width);
+            word = new String(word_now.word_byte, StandardCharsets.UTF_8).trim();
         }
 
         SimpleAdapter mSimpleAdapter = new SimpleAdapter(this,
@@ -136,12 +136,12 @@ public class MainActivity extends AppCompatActivity
 
                 Class<?> aClass = parent.getItemAtPosition(position).getClass();
                 HashMap word_meaning = (HashMap)parent.getItemAtPosition(position);
-                word_now = word_meaning.get("word").toString();
-                String meaning = word_meaning.get("meaning").toString();
+                word_now.word = word_meaning.get("word").toString();
+                word_now.meaning = word_meaning.get("meaning").toString();
 
                 Intent intent = new Intent(MainActivity.this, WordDetail.class);
-                intent.putExtra("word", word_now);
-                intent.putExtra("meaning", meaning);
+                intent.putExtra("word", word_now.word);
+                intent.putExtra("meaning", word_now.meaning);
                 //打开新窗口
                 startActivity(intent);
 
