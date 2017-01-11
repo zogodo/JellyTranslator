@@ -214,6 +214,11 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
                 setResult(RESULT_OK,intent);
                 return true;
+            case R.id.myDict:
+                intent = new Intent(MainActivity.this, MyDict.class);
+                startActivity(intent);
+                setResult(RESULT_OK,intent);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
