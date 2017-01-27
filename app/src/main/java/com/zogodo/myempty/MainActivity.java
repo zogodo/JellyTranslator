@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity
 
     public static StarDict ec_dic;
     public static String sd_dic_path = "/mnt/sdcard/Android/data/com.zogodo.jelly/files/dict/";
-    OneWord word_now;
+    OneWord word_now = new OneWord();
 
     public void updateListView(String tran) throws IOException
     {
@@ -93,8 +93,8 @@ public class MainActivity extends AppCompatActivity
             return;
         }
 
-        int start = ec_dic.GetWordStart(tran);
-        if (start == -1)
+        word_now.index = ec_dic.GetWordStart(tran);
+        if (word_now.index == -1)
         {
             lv.removeAllViewsInLayout();
             return;
@@ -103,12 +103,12 @@ public class MainActivity extends AppCompatActivity
         ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String, Object>>();
         int i = 0;
         word_now.word_byte = new byte[StarDict.word_width];
-        System.arraycopy(ec_dic.index_file_align, start + i*StarDict.index_width, word_now.word_byte, 0, StarDict.word_width);
+        System.arraycopy(ec_dic.index_file_align, word_now.index + i*StarDict.index_width, word_now.word_byte, 0, StarDict.word_width);
         String word = new String(word_now.word_byte, StandardCharsets.UTF_8).trim();
 
         while(i < 100 && word.toLowerCase().indexOf(tran) == 0)
         {
-            String meaning = ec_dic.GetMeaningOfWord(start + i*StarDict.index_width);
+            String meaning = ec_dic.GetMeaningOfWord(word_now.index + i*StarDict.index_width);
             meaning = meaning.replaceAll("\\s+", " ");
             //meaning = meaning.replaceAll("^t(.+?)m", "[ $1 ] ");
             //meaning = meaning.replaceAll("^m", "");
@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity
             listItem.add(map);
             i++;
 
-            System.arraycopy(ec_dic.index_file_align, start + i*StarDict.index_width, word_now.word_byte, 0, StarDict.word_width);
+            System.arraycopy(ec_dic.index_file_align, word_now.index + i*StarDict.index_width, word_now.word_byte, 0, StarDict.word_width);
             word = new String(word_now.word_byte, StandardCharsets.UTF_8).trim();
         }
 

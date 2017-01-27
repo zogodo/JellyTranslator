@@ -15,10 +15,14 @@ import java.nio.charset.StandardCharsets;
 class OneWord
 {
     public int index;
+    public int start;
     public int meaning_offset;
-    public byte[] word_byte = new byte[StarDict.word_width];
+    public int meaning_length;
     public String word;
     public String meaning;
+    public byte[] meaning_offset_byte = new byte[4];
+    public byte[] meaning_length_byte = new byte[4];
+    public byte[] word_byte = new byte[StarDict.word_width];
 }
 
 public class StarDict
@@ -188,6 +192,8 @@ public class StarDict
 
         int low = 0;
         int high = this.index_file_align.length/index_width - 1;
+        OneWord word1 = new OneWord();
+        OneWord word_befor = new OneWord();
 
         while (low <= high)
         {
@@ -197,19 +203,17 @@ public class StarDict
                 return 0;
             }
 
-            byte[] word_byte = new byte[word_width];
-            System.arraycopy(this.index_file_align, middle*index_width, word_byte, 0, word_width);
-            byte[] word_befor_byte = new byte[word_width];
-            System.arraycopy(this.index_file_align, middle*index_width - index_width, word_befor_byte, 0, word_width);
+            System.arraycopy(this.index_file_align, middle*index_width, word1.word_byte, 0, word_width);
+            System.arraycopy(this.index_file_align, middle*index_width - index_width, word_befor.word_byte, 0, word_width);
 
-            String word = new String(word_byte, StandardCharsets.UTF_8).toLowerCase();
-            String word_befor = new String(word_befor_byte, StandardCharsets.UTF_8).toLowerCase();
+            word1.word = new String(word1.word_byte, StandardCharsets.UTF_8).toLowerCase();
+            word_befor.word = new String(word_befor.word_byte, StandardCharsets.UTF_8).toLowerCase();
 
-            if ((word_befor).indexOf(tran) != 0 && (word).indexOf(tran) == 0)
+            if ((word_befor.word).indexOf(tran) != 0 && (word1.word).indexOf(tran) == 0)
             {
                 return middle*index_width;
             }
-            if (tran.compareTo(word) < 0)
+            if (tran.compareTo(word1.word) < 0)
             {
                 high = middle - 1;
             }
@@ -224,18 +228,18 @@ public class StarDict
     public String GetMeaningOfWord(int index) throws IOException
     {
         // 获取单词意思，参数 index 是单词所在索引字节流中的字节序号
-        byte[] offset_byte = new byte[4];
-        System.arraycopy(this.index_file_align, index + word_width, offset_byte, 0, 4);
-        byte[] length_byte = new byte[4];
-        System.arraycopy(this.index_file_align, index + (word_width + 4), length_byte, 0, 4);
+        OneWord word = new OneWord();
+        word.index = index;
+        System.arraycopy(this.index_file_align, index + word_width, word.meaning_offset_byte, 0, 4);
+        System.arraycopy(this.index_file_align, index + (word_width + 4), word.meaning_length_byte, 0, 4);
 
-        int offset = to_int(offset_byte);
-        int length = to_int(length_byte);
-        if (offset < 0 || offset >= dicfilesize)
+        word.meaning_offset = to_int(word.meaning_offset_byte);
+        word.meaning_length = to_int(word.meaning_length_byte);
+        if (word.meaning_offset < 0 || word.meaning_offset >= dicfilesize)
         {
             return "outofsizeerror";
         }
-        return ReadFile.readFileByOffset(this.dic_file, offset, length);
+        return ReadFile.readFileByOffset(this.dic_file, word.meaning_offset, word.meaning_length);
     }
 
     public byte[] MergeIndex(StarDict merge_from)
@@ -291,7 +295,26 @@ public class StarDict
         }
         while(j < merge_from.index_file_align.length)
         {
-            merge_index[k++] = merge_from.index_file_align[j++];
+            for(int ii = 0; ii < index_width; ii++)
+            {
+                if(ii == word_width)
+                {
+                    // 新 offset 要加上原字典内容文件的大小
+                    byte[] add_offset_byte = new byte[4];
+                    System.arraycopy(merge_from.index_file_align, j, add_offset_byte, 0, 4);
+                    add_offset_byte = byte_add_int(add_offset_byte, dicfilesize);
+                    for (int jj = 0; jj < 4; jj++)
+                    {
+                        merge_index[k++] = add_offset_byte[jj];
+                    }
+                    for (ii += 4, j += 4; ii < index_width; ii++)
+                    {
+                        merge_index[k++] = merge_from.index_file_align[j++];
+                    }
+                    continue;
+                }
+                merge_index[k++] = merge_from.index_file_align[j++];
+            }
         }
         return merge_index;
     }
@@ -325,49 +348,48 @@ public class StarDict
         this.dic_file.close();
         this.dic_file = new RandomAccessFile(this.dic_file_path, "rw");
 
-        dicfilesize += add_from.dicfilesize;
+        this.dicfilesize += add_from.dicfilesize;
     }
 
     public void PrintfromTran(String tran, int print_count) throws IOException
     {
-        int start = this.GetWordStart(tran);
-        //start = 0;
-        if (start == -1)
+        OneWord word = new OneWord();
+        word.start = this.GetWordStart(tran);
+        //word.start = 0;
+        if (word.start == -1)
         {
             System.out.println("//------------not found-------------//");
             return;
         }
-        OneWord word = new OneWord();
         for (int i = 0; i < print_count && i < this.wordcount;
-             i++, start = start + StarDict.index_width)
+             i++, word.start = word.start + StarDict.index_width)
         {
-            System.arraycopy(this.index_file_align, start, word.word_byte, 0, 48);
+            System.arraycopy(this.index_file_align, word.start, word.word_byte, 0, 48);
             word.word = new String(word.word_byte, StandardCharsets.UTF_8);
-            word.meaning = this.GetMeaningOfWord(start);
+            word.meaning = this.GetMeaningOfWord(word.start);
 
-            System.out.println(start/56+1 + "\t" + word.word + "|" + word.meaning.replaceAll("\n", " "));
+            System.out.println(word.start/56+1 + "\t" + word.word + "|" + word.meaning.replaceAll("\n", " "));
         }
     }
 
     public void PrintDicToTxt(String txt_file_path) throws IOException
     {
-        int start = 0;
         OneWord word = new OneWord();
+        word.start = 0;
         String one_word;
         for (int i = 0; i < this.wordcount;
-             i++, start = start + StarDict.index_width)
+             i++, word.start = word.start + StarDict.index_width)
         {
-            System.arraycopy(this.index_file_align, start, word.word_byte, 0, 48);
+            System.arraycopy(this.index_file_align, word.start, word.word_byte, 0, 48);
             word.word = new String(word.word_byte, StandardCharsets.UTF_8);
-            word.meaning = this.GetMeaningOfWord(start);
+            word.meaning = this.GetMeaningOfWord(word.start);
 
             one_word = word.word.trim() + "\t" + word.meaning.replaceAll("\n", " ") + "\r\n";
             if(i%5000 == 0 || i == this.wordcount)
             {
-                System.out.println(start/56);
+                System.out.println(word.start/56);
             }
             ReadFile.WriteStringToFile(txt_file_path, one_word);
         }
     }
-
 }
