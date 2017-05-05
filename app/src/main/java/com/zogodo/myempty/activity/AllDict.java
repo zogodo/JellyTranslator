@@ -1,4 +1,4 @@
-package com.zogodo.myempty;
+package com.zogodo.myempty.activity;
 
 import android.app.DownloadManager;
 import android.net.Uri;
@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
+import com.zogodo.myempty.R;
 
 import java.io.BufferedReader;
 import java.io.IOException;

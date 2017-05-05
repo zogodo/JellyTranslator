@@ -1,4 +1,4 @@
-package com.zogodo.myempty;
+package com.zogodo.myempty.cmd;
 
 /**
  * Created by zogod on 2016/11/14.

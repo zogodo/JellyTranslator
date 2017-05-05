@@ -1,4 +1,4 @@
-package com.zogodo.myempty;
+package com.zogodo.myempty.cmd;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -11,19 +11,6 @@ import java.nio.charset.StandardCharsets;
 /**
  * Created by zogod on 2016/7/25.
  */
-
-class OneWord
-{
-    public int index;
-    public int start;
-    public int meaning_offset;
-    public int meaning_length;
-    public String word;
-    public String meaning;
-    public byte[] meaning_offset_byte = new byte[4];
-    public byte[] meaning_length_byte = new byte[4];
-    public byte[] word_byte = new byte[StarDict.word_width];
-}
 
 public class StarDict
 {
@@ -47,7 +34,7 @@ public class StarDict
     public static final int word_width = 48;    // 一个单词的宽度
     public static final int index_width = 56;   // 一个索引的宽度
 
-    StarDict(String dic_path, String dic_name) throws IOException
+    public StarDict(String dic_path, String dic_name) throws IOException
     {
         /* 构造字典
          * 参数：
@@ -192,8 +179,8 @@ public class StarDict
 
         int low = 0;
         int high = this.index_file_align.length/index_width - 1;
-        OneWord word1 = new OneWord();
-        OneWord word_befor = new OneWord();
+        StarDictWord word1 = new StarDictWord();
+        StarDictWord word_befor = new StarDictWord();
 
         while (low <= high)
         {
@@ -228,7 +215,7 @@ public class StarDict
     public String GetMeaningOfWord(int index) throws IOException
     {
         // 获取单词意思，参数 index 是单词所在索引字节流中的字节序号
-        OneWord word = new OneWord();
+        StarDictWord word = new StarDictWord();
         word.index = index;
         System.arraycopy(this.index_file_align, index + word_width, word.meaning_offset_byte, 0, 4);
         System.arraycopy(this.index_file_align, index + (word_width + 4), word.meaning_length_byte, 0, 4);
@@ -353,7 +340,7 @@ public class StarDict
 
     public void PrintfromTran(String tran, int print_count) throws IOException
     {
-        OneWord word = new OneWord();
+        StarDictWord word = new StarDictWord();
         word.start = this.GetWordStart(tran);
         //word.start = 0;
         if (word.start == -1)
@@ -374,7 +361,7 @@ public class StarDict
 
     public void PrintDicToTxt(String txt_file_path) throws IOException
     {
-        OneWord word = new OneWord();
+        StarDictWord word = new StarDictWord();
         word.start = 0;
         String one_word;
         for (int i = 0; i < this.wordcount;

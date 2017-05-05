@@ -1,7 +1,7 @@
 /**
  * Created by zogod on 2016/11/27.
  */
-package com.zogodo.myempty;
+package com.zogodo.myempty.cmd;
 
 import android.app.DownloadManager;
 import android.app.DownloadManager.Query;
@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.widget.Toast;
+import com.zogodo.myempty.activity.MainActivity;
 
 import java.io.IOException;
 

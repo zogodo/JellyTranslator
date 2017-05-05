@@ -1,9 +1,10 @@
-package com.zogodo.myempty;
+package com.zogodo.myempty.activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import com.zogodo.myempty.R;
 
 import java.io.IOException;
 import java.util.ArrayList;

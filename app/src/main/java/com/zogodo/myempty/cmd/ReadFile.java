@@ -1,4 +1,4 @@
-package com.zogodo.myempty;
+package com.zogodo.myempty.cmd;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;

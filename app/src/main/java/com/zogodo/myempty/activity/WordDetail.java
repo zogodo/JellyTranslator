@@ -1,8 +1,9 @@
-package com.zogodo.myempty;
+package com.zogodo.myempty.activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
+import com.zogodo.myempty.R;
 
 public class WordDetail extends AppCompatActivity
 {
