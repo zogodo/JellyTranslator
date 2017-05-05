@@ -196,6 +196,11 @@ public class MainActivity extends AppCompatActivity
         Intent intent = null;
         switch (item.getItemId())
         {
+            case R.id.help:
+                intent = new Intent(MainActivity.this, Helper.class);
+                startActivity(intent);
+                setResult(RESULT_OK,intent);
+                return true;
             case R.id.about:
                 //Toast.makeText(this, "关于", Toast.LENGTH_SHORT).show();
                 intent = new Intent(MainActivity.this, About.class);

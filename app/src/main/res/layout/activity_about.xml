@@ -10,12 +10,42 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".activity.About">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="关于"
-        android:id="@+id/button"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="80dp"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="星际译王 安卓版"
+            android:id="@+id/textView" android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="桌面版简介："
+            android:id="@+id/textView4"
+            android:layout_marginTop="25dp"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/textView"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="http://www.stardict.org"
+            android:id="@+id/textView5" android:layout_below="@+id/textView4"
+            android:layout_alignParentStart="true"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="应用源码："
+            android:id="@+id/textView6" android:layout_below="@+id/textView5"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="25dp"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="https://github.com/zogodo/JellyTranslator"
+            android:id="@+id/textView7" android:layout_below="@+id/textView6"
+            android:layout_alignParentStart="true"/>
 </RelativeLayout>

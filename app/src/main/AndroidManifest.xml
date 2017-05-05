@@ -41,6 +41,8 @@
 
         <activity android:name=".activity.MyDict">
         </activity>
+        <activity android:name=".activity.Helper">
+        </activity>
     </application>
 
 </manifest>
