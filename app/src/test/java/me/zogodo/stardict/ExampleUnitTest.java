@@ -1,4 +1,4 @@
-package com.zogodo.myempty;
+package me.zogodo.stardict;
 
 import org.junit.Test;
 

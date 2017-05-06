@@ -1,4 +1,4 @@
-package com.zogodo.myempty.cmd;
+package me.zogodo.stardict.cmd;
 
 /**
  * Created by zogod on 17/5/5.

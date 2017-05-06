@@ -1,4 +1,4 @@
-package com.zogodo.myempty.activity;
+package me.zogodo.stardict;
 
 import android.app.DownloadManager;
 import android.net.Uri;
@@ -9,7 +9,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
-import com.zogodo.myempty.R;
+import me.zogodo.stardict.R;
 
 import java.io.BufferedReader;
 import java.io.IOException;

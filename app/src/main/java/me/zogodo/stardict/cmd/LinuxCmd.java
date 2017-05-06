@@ -1,9 +1,9 @@
 /**
  * Created by zogod on 2016/11/27.
  */
-package com.zogodo.myempty.cmd;
+package me.zogodo.stardict.cmd;
 
-import com.zogodo.myempty.activity.MainActivity;
+import me.zogodo.stardict.MainActivity;
 
 import java.io.BufferedReader;
 import java.io.IOException;

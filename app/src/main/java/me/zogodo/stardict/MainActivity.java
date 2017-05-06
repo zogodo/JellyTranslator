@@ -1,4 +1,4 @@
-package com.zogodo.myempty.activity;
+package me.zogodo.stardict;
 
 import android.content.Intent;
 import android.os.Environment;
@@ -13,9 +13,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import com.zogodo.myempty.R;
-import com.zogodo.myempty.cmd.StarDictWord;
-import com.zogodo.myempty.cmd.StarDict;
+import me.zogodo.stardict.R;
+import me.zogodo.stardict.cmd.StarDictWord;
+import me.zogodo.stardict.cmd.StarDict;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public static StarDict ec_dic;
-    public static String sd_dic_path = "/mnt/sdcard/Android/data/com.zogodo.jelly/files/dict/";
+    public static String sd_dic_path = "/mnt/sdcard/Android/data/me.zogodo.stardict/files/dict/";
     StarDictWord word_now = new StarDictWord();
 
     public void updateListView(String tran) throws IOException

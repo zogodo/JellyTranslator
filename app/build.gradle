@@ -4,7 +4,7 @@ android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
     defaultConfig {
-        applicationId 'com.zogodo.jelly'
+        applicationId 'me.zogodo.stardict'
         minSdkVersion 19
         targetSdkVersion 23
         versionCode 2
