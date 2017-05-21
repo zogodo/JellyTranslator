@@ -27,27 +27,37 @@ import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity
 {
+    public static StarDict ec_dic;
+    StarDictWord word_now = new StarDictWord();
+    public static String PACKAGE_NAME;
+    public static String app_root_data_path;
+    public static String sd_root;
+    public static String app_sd_data_path;
+    public static String root_dic_path;
+    public static String sd_dic_path = "/mnt/sdcard/Android/data/me.zogodo.stardict/files/dict/";
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        String APP_DOC_PATH = "/sdcard/Android"
-                + Environment.getDataDirectory().getAbsolutePath() //数据文件夹路径
-                + "/" + getPackageName() //包名
-                + "/files/dic/";//文件夹名
-
-        String PACKAGE_NAME = getPackageName();
-        String packge_path = "/data" + Environment.getDataDirectory().getAbsolutePath() + "/"  + PACKAGE_NAME;
-        String dic_path = packge_path + "/dic";
+        PACKAGE_NAME = getPackageName();
+        app_root_data_path = Environment.getDataDirectory().getAbsolutePath() + "/data/"  + PACKAGE_NAME;
+        if (isExternalStorageWritable())
+        {
+            sd_root = Environment.getExternalStorageDirectory().getAbsolutePath();
+            app_sd_data_path = sd_root + "/Android/data/" + PACKAGE_NAME;
+        }
+        root_dic_path = app_root_data_path + "/dict";
+        sd_dic_path = app_sd_data_path + "/files/dict/";
 
         //All dictionary
-        String ec_idx_file = dic_path + "/all_dic.idx";
-        String ec_dic_file = dic_path + "/all_dic.dict";
-        String ec_ifo_file = dic_path + "/all_dic.ifo";
+        String ec_idx_file = root_dic_path + "/all_dic.idx";
+        String ec_dic_file = root_dic_path + "/all_dic.dict";
+        String ec_ifo_file = root_dic_path + "/all_dic.ifo";
 
-        File dic_path_file = new File(dic_path);
+        File dic_path_file = new File(root_dic_path);
         if (!dic_path_file.exists())
         {
             dic_path_file.mkdir();
@@ -66,7 +76,7 @@ public class MainActivity extends AppCompatActivity
         Long time0 = System.currentTimeMillis();
         try
         {
-            ec_dic = new StarDict(dic_path + "/", "all_dic");
+            ec_dic = new StarDict(root_dic_path + "/", "all_dic");
         }
         catch (IOException e)
         {
@@ -82,9 +92,15 @@ public class MainActivity extends AppCompatActivity
         //search_view.setQuery(word_now.word, false);
     }
 
-    public static StarDict ec_dic;
-    public static String sd_dic_path = "/mnt/sdcard/Android/data/me.zogodo.stardict/files/dict/";
-    StarDictWord word_now = new StarDictWord();
+    public boolean isExternalStorageWritable()
+    {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state))
+        {
+            return true;
+        }
+        return false;
+    }
 
     public void updateListView(String tran) throws IOException
     {
