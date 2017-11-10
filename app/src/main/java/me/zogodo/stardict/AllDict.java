@@ -88,6 +88,7 @@ public class AllDict extends AppCompatActivity
         String file_name = url_split[url_split.length - 1];
         //下载到 /mnt/sdcard/Android/data/packageName/files/dict/ 里
         request.setDestinationInExternalFilesDir(this, "dict", file_name);
+        //request.setDestinationInExternalPublicDir("dict", )
         long down_id = downloadManager.enqueue(request);
         //TODO 把id保存好，在接收者里面要用，最好保存在Preferences里面
         return down_id;

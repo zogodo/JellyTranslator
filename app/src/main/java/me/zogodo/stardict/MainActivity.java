@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import me.zogodo.stardict.R;
+import me.zogodo.stardict.cmd.LinuxCmd;
 import me.zogodo.stardict.cmd.StarDictWord;
 import me.zogodo.stardict.cmd.StarDict;
 
@@ -34,7 +35,7 @@ public class MainActivity extends AppCompatActivity
     public static String sd_root;
     public static String app_sd_data_path;
     public static String root_dic_path;
-    public static String sd_dic_path = "/mnt/sdcard/Android/data/me.zogodo.stardict/files/dict/";
+    public static String sd_dic_path;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -84,6 +85,18 @@ public class MainActivity extends AppCompatActivity
         }
 
         Log.e("22222", ((Long)(System.currentTimeMillis() - time0)).toString());
+
+
+        String cmd = "tar --help";
+        String[] re = null;
+        try
+        {
+            re = LinuxCmd.getCmdReadLine(cmd);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     protected void onRestart() {
