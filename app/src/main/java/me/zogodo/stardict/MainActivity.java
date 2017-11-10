@@ -55,20 +55,20 @@ public class MainActivity extends AppCompatActivity
         root_dic_path = app_root_data_path + "/dict";
         sd_dic_path = app_sd_data_path + "/files/dict/";
 
-        //英汉
-        String e2c_idx_file = root_dic_path + "/e2c_dic.idx";
-        String e2c_dic_file = root_dic_path + "/e2c_dic.dict";
-        String e2c_ifo_file = root_dic_path + "/e2c_dic.ifo";
-
         File dic_path_file = new File(root_dic_path);
         if (!dic_path_file.exists())
         {
             dic_path_file.mkdir();
             try
             {
-                WriteDicFile(e2c_idx_file, R.raw.e2c_idx);
-                WriteDicFile(e2c_dic_file, R.raw.e2c_dic);
-                WriteDicFile(e2c_ifo_file, R.raw.e2c_ifo);
+                //英汉
+                WriteDicFile(root_dic_path + "/e2c_dic.idx", R.raw.e2c_idx);
+                WriteDicFile(root_dic_path + "/e2c_dic.dict", R.raw.e2c_dic);
+                WriteDicFile(root_dic_path + "/e2c_dic.ifo", R.raw.e2c_ifo);
+                //汉英
+                WriteDicFile(root_dic_path + "/c2e_dic.idx", R.raw.c2e_idx);
+                WriteDicFile(root_dic_path + "/c2e_dic.dict", R.raw.c2e_dic);
+                WriteDicFile(root_dic_path + "/c2e_dic.ifo", R.raw.c2e_ifo);
             }
             catch (IOException e)
             {
@@ -80,6 +80,8 @@ public class MainActivity extends AppCompatActivity
         try
         {
             e2c_dic = new StarDict(root_dic_path + "/", "e2c_dic");
+            c2e_dic = new StarDict(root_dic_path + "/", "c2e_dic");
+            dic_now = e2c_dic;
         }
         catch (IOException e)
         {
@@ -101,7 +103,8 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    protected void onRestart() {
+    protected void onRestart()
+    {
         super.onRestart();
         SearchView search_view = (SearchView)findViewById(R.id.search);
         //search_view.setQuery(word_now.word, false);
@@ -127,22 +130,31 @@ public class MainActivity extends AppCompatActivity
             return;
         }
 
-        word_now.index = e2c_dic.GetWordStart(tran);
+        word_now.index = e2c_dic.GetWordStart(tran); //先查英译汉
         if (word_now.index == -1)
         {
-            lv.removeAllViewsInLayout();
-            return;
+            word_now.index = c2e_dic.GetWordStart(tran); //查汉译英
+            if (word_now.index == -1)
+            {
+                lv.removeAllViewsInLayout();
+                return;
+            }
+            dic_now = c2e_dic;
+        }
+        else
+        {
+            dic_now = e2c_dic;
         }
 
         ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String, Object>>();
         int i = 0;
         word_now.word_byte = new byte[StarDict.word_width];
-        System.arraycopy(e2c_dic.index_file_align, word_now.index + i*StarDict.index_width, word_now.word_byte, 0, StarDict.word_width);
+        System.arraycopy(dic_now.index_file_align, word_now.index + i*StarDict.index_width, word_now.word_byte, 0, StarDict.word_width);
         String word = new String(word_now.word_byte, StandardCharsets.UTF_8).trim();
 
         while(i < 100 && word.toLowerCase().indexOf(tran) == 0)
         {
-            String meaning = e2c_dic.GetMeaningOfWord(word_now.index + i*StarDict.index_width);
+            String meaning = dic_now.GetMeaningOfWord(word_now.index + i*StarDict.index_width);
             meaning = meaning.replaceAll("\\s+", " ");
             //meaning = meaning.replaceAll("^t(.+?)m", "[ $1 ] ");
             //meaning = meaning.replaceAll("^m", "");
@@ -155,7 +167,7 @@ public class MainActivity extends AppCompatActivity
             listItem.add(map);
             i++;
 
-            System.arraycopy(e2c_dic.index_file_align, word_now.index + i*StarDict.index_width, word_now.word_byte, 0, StarDict.word_width);
+            System.arraycopy(dic_now.index_file_align, word_now.index + i*StarDict.index_width, word_now.word_byte, 0, StarDict.word_width);
             word = new String(word_now.word_byte, StandardCharsets.UTF_8).trim();
         }
 
@@ -240,7 +252,7 @@ public class MainActivity extends AppCompatActivity
                 return true;
             case R.id.downloadDict:
                 intent = new Intent(MainActivity.this, AllDict.class);
-                //intent.putExtra("e2c_dic", e2c_dic);
+                //intent.putExtra("dic_now", dic_now);
                 startActivity(intent);
                 setResult(RESULT_OK,intent);
                 return true;
