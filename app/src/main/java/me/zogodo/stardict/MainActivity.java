@@ -13,7 +13,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import me.zogodo.stardict.R;
 import me.zogodo.stardict.cmd.LinuxCmd;
 import me.zogodo.stardict.cmd.StarDictWord;
 import me.zogodo.stardict.cmd.StarDict;
@@ -28,14 +27,17 @@ import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity
 {
-    public static StarDict ec_dic;
+    public static StarDict e2c_dic;
+    public static StarDict c2e_dic;
+    public static StarDict dic_now;
     StarDictWord word_now = new StarDictWord();
-    public static String PACKAGE_NAME;
-    public static String app_root_data_path;
-    public static String sd_root;
-    public static String app_sd_data_path;
-    public static String root_dic_path;
-    public static String sd_dic_path;
+
+    public static String PACKAGE_NAME;             //应用包名
+    public static String app_root_data_path;       //数据文件夹路径
+    public static String sd_root;                  //
+    public static String app_sd_data_path;         //SD卡里的数据文件夹
+    public static String root_dic_path;            //
+    public static String sd_dic_path;              //SD卡根路径
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -45,7 +47,7 @@ public class MainActivity extends AppCompatActivity
 
         PACKAGE_NAME = getPackageName();
         app_root_data_path = Environment.getDataDirectory().getAbsolutePath() + "/data/"  + PACKAGE_NAME;
-        if (isExternalStorageWritable())
+        if (isExternalStorageWritable())  //第一次打开应用
         {
             sd_root = Environment.getExternalStorageDirectory().getAbsolutePath();
             app_sd_data_path = sd_root + "/Android/data/" + PACKAGE_NAME;
@@ -53,10 +55,10 @@ public class MainActivity extends AppCompatActivity
         root_dic_path = app_root_data_path + "/dict";
         sd_dic_path = app_sd_data_path + "/files/dict/";
 
-        //All dictionary
-        String ec_idx_file = root_dic_path + "/all_dic.idx";
-        String ec_dic_file = root_dic_path + "/all_dic.dict";
-        String ec_ifo_file = root_dic_path + "/all_dic.ifo";
+        //英汉
+        String e2c_idx_file = root_dic_path + "/e2c_dic.idx";
+        String e2c_dic_file = root_dic_path + "/e2c_dic.dict";
+        String e2c_ifo_file = root_dic_path + "/e2c_dic.ifo";
 
         File dic_path_file = new File(root_dic_path);
         if (!dic_path_file.exists())
@@ -64,9 +66,9 @@ public class MainActivity extends AppCompatActivity
             dic_path_file.mkdir();
             try
             {
-                WriteDicFile(ec_idx_file, R.raw.all_idx);
-                WriteDicFile(ec_dic_file, R.raw.all_dic);
-                WriteDicFile(ec_ifo_file, R.raw.all_ifo);
+                WriteDicFile(e2c_idx_file, R.raw.e2c_idx);
+                WriteDicFile(e2c_dic_file, R.raw.e2c_dic);
+                WriteDicFile(e2c_ifo_file, R.raw.e2c_ifo);
             }
             catch (IOException e)
             {
@@ -77,7 +79,7 @@ public class MainActivity extends AppCompatActivity
         Long time0 = System.currentTimeMillis();
         try
         {
-            ec_dic = new StarDict(root_dic_path + "/", "all_dic");
+            e2c_dic = new StarDict(root_dic_path + "/", "e2c_dic");
         }
         catch (IOException e)
         {
@@ -125,7 +127,7 @@ public class MainActivity extends AppCompatActivity
             return;
         }
 
-        word_now.index = ec_dic.GetWordStart(tran);
+        word_now.index = e2c_dic.GetWordStart(tran);
         if (word_now.index == -1)
         {
             lv.removeAllViewsInLayout();
@@ -135,12 +137,12 @@ public class MainActivity extends AppCompatActivity
         ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String, Object>>();
         int i = 0;
         word_now.word_byte = new byte[StarDict.word_width];
-        System.arraycopy(ec_dic.index_file_align, word_now.index + i*StarDict.index_width, word_now.word_byte, 0, StarDict.word_width);
+        System.arraycopy(e2c_dic.index_file_align, word_now.index + i*StarDict.index_width, word_now.word_byte, 0, StarDict.word_width);
         String word = new String(word_now.word_byte, StandardCharsets.UTF_8).trim();
 
         while(i < 100 && word.toLowerCase().indexOf(tran) == 0)
         {
-            String meaning = ec_dic.GetMeaningOfWord(word_now.index + i*StarDict.index_width);
+            String meaning = e2c_dic.GetMeaningOfWord(word_now.index + i*StarDict.index_width);
             meaning = meaning.replaceAll("\\s+", " ");
             //meaning = meaning.replaceAll("^t(.+?)m", "[ $1 ] ");
             //meaning = meaning.replaceAll("^m", "");
@@ -153,7 +155,7 @@ public class MainActivity extends AppCompatActivity
             listItem.add(map);
             i++;
 
-            System.arraycopy(ec_dic.index_file_align, word_now.index + i*StarDict.index_width, word_now.word_byte, 0, StarDict.word_width);
+            System.arraycopy(e2c_dic.index_file_align, word_now.index + i*StarDict.index_width, word_now.word_byte, 0, StarDict.word_width);
             word = new String(word_now.word_byte, StandardCharsets.UTF_8).trim();
         }
 
@@ -238,7 +240,7 @@ public class MainActivity extends AppCompatActivity
                 return true;
             case R.id.downloadDict:
                 intent = new Intent(MainActivity.this, AllDict.class);
-                //intent.putExtra("all_dic", ec_dic);
+                //intent.putExtra("e2c_dic", e2c_dic);
                 startActivity(intent);
                 setResult(RESULT_OK,intent);
                 return true;

@@ -54,7 +54,7 @@ public class DownloadCompleteReceiver extends BroadcastReceiver
                 StarDict add_dic = new StarDict(
                         MainActivity.sd_dic_path + result[0],
                         dic_name);
-                MainActivity.ec_dic.AddDic(add_dic);
+                //MainActivity.ec_dic.AddDic(add_dic);
                 Toast.makeText(context, "字典添加成功。", Toast.LENGTH_LONG).show();
             }
             catch (IOException e)

@@ -33,8 +33,8 @@ public class MyDict extends AppCompatActivity
     {
         ListView lv = (ListView) findViewById(R.id.listView3);
         ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String, Object>>();
-        String[] my_dic_list = MainActivity.ec_dic.bookname.split("\\|");
-        String[] my_dic_list_info = MainActivity.ec_dic.description.split("\\|");
+        String[] my_dic_list = MainActivity.e2c_dic.bookname.split("\\|");
+        String[] my_dic_list_info = MainActivity.e2c_dic.description.split("\\|");
         for (int i = 0; i < my_dic_list.length; i++)
         {
             HashMap<String, Object> map = new HashMap<String, Object>();

@@ -9,7 +9,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
-import me.zogodo.stardict.R;
 
 import java.io.BufferedReader;
 import java.io.IOException;
