@@ -76,7 +76,16 @@ public class AllDict extends AppCompatActivity
     private long DownloadDict(String dic_name, String file_url)
     {
         //下载字典文件
-        return AndroidHelp.me.downloadFileToDataPath(this, file_url, "en_dic");
+        if(dic_name.contains("汉") && !dic_name.contains("英汉"))
+        {
+            //汉语词典
+            return AndroidHelp.me.downloadFileToDataPath(this, file_url, "cn_dic");
+        }
+        else
+        {
+            //英语词典
+            return AndroidHelp.me.downloadFileToDataPath(this, file_url, "en_dic");
+        }
     }
 
 }

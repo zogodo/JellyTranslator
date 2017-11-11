@@ -142,11 +142,12 @@ public class MainActivity extends AppCompatActivity
         while(i < 100 && word.toLowerCase().indexOf(tran) == 0)
         {
             String meaning = dic_now.GetMeaningOfWord(word_now.index + i*StarDict.index_width);
-            meaning = meaning.replaceAll("\\s+", " ");
+            meaning = meaning.replaceAll("[\0]", "\n");
+            //meaning = meaning.replaceAll("\\s+", " ");
             //meaning = meaning.replaceAll("^t(.+?)m", "[ $1 ] ");
             //meaning = meaning.replaceAll("^m", "");
             //meaning = meaning.replaceAll(" ([a-z]{1,7}\\.)", "\n$1 ");
-            meaning = meaning.replaceAll("^(.{1,13}?)\0", "[ $1 ] ");
+            //meaning = meaning.replaceAll("^(.{1,13}?)\0", "[ $1 ] ");
 
             HashMap<String, Object> map = new HashMap<String, Object>();
             map.put("word", word);
