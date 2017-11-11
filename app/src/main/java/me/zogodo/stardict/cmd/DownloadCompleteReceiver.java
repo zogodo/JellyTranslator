@@ -47,7 +47,7 @@ public class DownloadCompleteReceiver extends BroadcastReceiver
                         + MainActivity.sd_dic_path + result[0] + dic_name + ".dict.gz";
                 LinuxCmd.PerformCmd(cmd);
                 // 解压字典内容文件
-                cmd = "gzip -d " + MainActivity.sd_dic_path + result[0]
+                cmd = MainActivity.busy_box_path + "gzip -d " + MainActivity.sd_dic_path + result[0]
                         + dic_name + ".dict.gz -C "
                         + MainActivity.sd_dic_path + result[0];
                 LinuxCmd.PerformCmd(cmd);
@@ -67,15 +67,15 @@ public class DownloadCompleteReceiver extends BroadcastReceiver
     public String GetDicFileName(String[] result)
     {
         String dic_name = result[1].replaceAll(result[0], "");
-        if(dic_name.indexOf(".dict.dz") >= 0)
+        if(dic_name.contains(".dict.dz"))
         {
             dic_name = dic_name.replaceAll(".dict.dz", "");
         }
-        else if(dic_name.indexOf(".idx") >= 0)
+        else if(dic_name.contains(".idx"))
         {
             dic_name = dic_name.replaceAll(".idx", "");
         }
-        else if(dic_name.indexOf(".ifo") >= 0)
+        else if(dic_name.contains(".ifo"))
         {
             dic_name = dic_name.replaceAll(".ifo", "");
         }

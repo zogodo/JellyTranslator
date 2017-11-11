@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import me.zogodo.stardict.cmd.AndroidHelp;
 import me.zogodo.stardict.cmd.LinuxCmd;
 import me.zogodo.stardict.cmd.StarDictWord;
 import me.zogodo.stardict.cmd.StarDict;
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity
     public static String app_sd_data_path;         //SD卡里的数据文件夹
     public static String root_dic_path;            //
     public static String sd_dic_path;              //SD卡根路径
+    public static String busy_box_path;            //BusyBox路径
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -47,28 +49,33 @@ public class MainActivity extends AppCompatActivity
 
         PACKAGE_NAME = getPackageName();
         app_root_data_path = Environment.getDataDirectory().getAbsolutePath() + "/data/"  + PACKAGE_NAME;
-        if (isExternalStorageWritable())  //第一次打开应用
+        if (AndroidHelp.me.isExternalStorageWritable())  //是否有卡
         {
             sd_root = Environment.getExternalStorageDirectory().getAbsolutePath();
             app_sd_data_path = sd_root + "/Android/data/" + PACKAGE_NAME;
         }
         root_dic_path = app_root_data_path + "/dict";
         sd_dic_path = app_sd_data_path + "/files/dict/";
+        busy_box_path = app_root_data_path + "/cmd/busybox_armv7l";
 
         File dic_path_file = new File(root_dic_path);
         if (!dic_path_file.exists())
         {
+            //第一次打开应用
             dic_path_file.mkdir();
+            new File(app_root_data_path + "/cmd").mkdir();
             try
             {
                 //英汉
-                WriteDicFile(root_dic_path + "/e2c_dic.idx", R.raw.e2c_idx);
-                WriteDicFile(root_dic_path + "/e2c_dic.dict", R.raw.e2c_dic);
-                WriteDicFile(root_dic_path + "/e2c_dic.ifo", R.raw.e2c_ifo);
+                AndroidHelp.me.writeRawToFile(this, root_dic_path + "/e2c_dic.idx", R.raw.e2c_idx);
+                AndroidHelp.me.writeRawToFile(this, root_dic_path + "/e2c_dic.dict", R.raw.e2c_dic);
+                AndroidHelp.me.writeRawToFile(this, root_dic_path + "/e2c_dic.ifo", R.raw.e2c_ifo);
                 //汉英
-                WriteDicFile(root_dic_path + "/c2e_dic.idx", R.raw.c2e_idx);
-                WriteDicFile(root_dic_path + "/c2e_dic.dict", R.raw.c2e_dic);
-                WriteDicFile(root_dic_path + "/c2e_dic.ifo", R.raw.c2e_ifo);
+                AndroidHelp.me.writeRawToFile(this, root_dic_path + "/c2e_dic.idx", R.raw.c2e_idx);
+                AndroidHelp.me.writeRawToFile(this, root_dic_path + "/c2e_dic.dict", R.raw.c2e_dic);
+                AndroidHelp.me.writeRawToFile(this, root_dic_path + "/c2e_dic.ifo", R.raw.c2e_ifo);
+                //BusyBox
+                AndroidHelp.me.writeRawToFile(this, busy_box_path, R.raw.busybox_armv7l);
             }
             catch (IOException e)
             {
@@ -90,14 +97,18 @@ public class MainActivity extends AppCompatActivity
 
         Log.e("22222", ((Long)(System.currentTimeMillis() - time0)).toString());
 
-
-        String cmd = "tar --help";
+        busy_box_path += " ";
+        String cmd = "chmod 700 " + busy_box_path;
         String[] re = null;
         try
         {
             re = LinuxCmd.getCmdReadLine(cmd);
+
+            cmd = busy_box_path + "tar --help";
+            re = LinuxCmd.getCmdReadLine(cmd);
+            Log.e("33333", re[0]);
         }
-        catch (IOException e)
+        catch (Exception e)
         {
             e.printStackTrace();
         }
@@ -110,17 +121,7 @@ public class MainActivity extends AppCompatActivity
         //search_view.setQuery(word_now.word, false);
     }
 
-    public boolean isExternalStorageWritable()
-    {
-        String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state))
-        {
-            return true;
-        }
-        return false;
-    }
-
-    public void updateListView(String tran) throws IOException
+    void updateListView(String tran) throws IOException
     {
         ListView lv = (ListView) findViewById(R.id.listView);
 
@@ -266,19 +267,4 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void WriteDicFile(String dic_file_name, int file_id) throws IOException
-    {
-        File dic_file = new File(dic_file_name);
-        InputStream stream = getResources().openRawResource(file_id);
-        dic_file.createNewFile();
-        FileOutputStream outputStream = new FileOutputStream(dic_file.getPath());
-        byte[] buffer = new byte[1024];
-        int count = 0;
-        while ((count = stream.read(buffer)) > 0)
-        {
-            outputStream.write(buffer, 0, count);
-        }
-        outputStream.close();
-        stream.close();
-    }
 }

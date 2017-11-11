@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
+import me.zogodo.stardict.cmd.AndroidHelp;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -28,7 +29,7 @@ public class AllDict extends AppCompatActivity
 
         try
         {
-            cn_dic_list = readTextFileByLinesFromRaw(R.raw.cn_dic_list);
+            cn_dic_list = AndroidHelp.me.readTextFileByLinesFromRaw(this, R.raw.cn_dic_list);
             updateListView();
         }
         catch (IOException e)
@@ -88,27 +89,8 @@ public class AllDict extends AppCompatActivity
         //下载到 /mnt/sdcard/Android/data/packageName/files/dict/ 里
         request.setDestinationInExternalFilesDir(this, "dict", file_name);
         //request.setDestinationInExternalPublicDir("dict", )
-        long down_id = downloadManager.enqueue(request);
         //TODO 把id保存好，在接收者里面要用，最好保存在Preferences里面
-        return down_id;
-    }
-
-    public String[] readTextFileByLinesFromRaw(int file_id) throws IOException
-    {
-        //从raw中读取文本文件
-        InputStream stream = getResources().openRawResource(file_id);
-        InputStreamReader isReader = new InputStreamReader(stream, "UTF-8");
-        //int file_lines = getFileLines(stream);
-        int file_lines = 333;
-        BufferedReader reader = new BufferedReader(isReader);
-        String[] file_string = new String[file_lines];
-        for (int i = 0; i < file_lines; i++)
-        {
-            file_string[i] = new String();
-            file_string[i] = reader.readLine();
-        }
-        reader.close();
-        return file_string;
+        return downloadManager.enqueue(request);
     }
 
 }
