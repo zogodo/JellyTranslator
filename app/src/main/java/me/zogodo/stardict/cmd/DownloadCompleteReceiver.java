@@ -51,13 +51,13 @@ public class DownloadCompleteReceiver extends BroadcastReceiver
                         + dic_name + ".dict.gz -C "
                         + MainActivity.sd_dic_path + result[0];
                 LinuxCmd.PerformCmd(cmd);
-                StarDict add_dic = new StarDict(
-                        MainActivity.sd_dic_path + result[0],
-                        dic_name);
+                //StarDict add_dic = new StarDict(
+                //        MainActivity.sd_dic_path + result[0],
+                //        dic_name);
                 //MainActivity.ec_dic.AddDic(add_dic);
-                Toast.makeText(context, "字典添加成功。", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "字典下载成功。", Toast.LENGTH_LONG).show();
             }
-            catch (IOException e)
+            catch (Exception e)
             {
                 e.printStackTrace();
             }

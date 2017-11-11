@@ -19,9 +19,7 @@ import me.zogodo.stardict.cmd.StarDictWord;
 import me.zogodo.stardict.cmd.StarDict;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -76,12 +74,16 @@ public class MainActivity extends AppCompatActivity
                 AndroidHelp.me.writeRawToFile(this, root_dic_path + "/c2e_dic.ifo", R.raw.c2e_ifo);
                 //BusyBox
                 AndroidHelp.me.writeRawToFile(this, busy_box_path, R.raw.busybox_armv7l);
+
+                String cmd = "chmod 700 " + busy_box_path;
+                LinuxCmd.getCmdReadLine(cmd);
             }
             catch (IOException e)
             {
                 e.printStackTrace();
             }
         }
+        busy_box_path += " ";
 
         Long time0 = System.currentTimeMillis();
         try
@@ -90,28 +92,12 @@ public class MainActivity extends AppCompatActivity
             c2e_dic = new StarDict(root_dic_path + "/", "c2e_dic");
             dic_now = e2c_dic;
         }
-        catch (IOException e)
+        catch (Exception e)
         {
             e.printStackTrace();
         }
 
         Log.e("22222", ((Long)(System.currentTimeMillis() - time0)).toString());
-
-        busy_box_path += " ";
-        String cmd = "chmod 700 " + busy_box_path;
-        String[] re = null;
-        try
-        {
-            re = LinuxCmd.getCmdReadLine(cmd);
-
-            cmd = busy_box_path + "tar --help";
-            re = LinuxCmd.getCmdReadLine(cmd);
-            Log.e("33333", re[0]);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
     }
 
     protected void onRestart()

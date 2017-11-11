@@ -3,6 +3,8 @@
  */
 package me.zogodo.stardict.cmd;
 
+import me.zogodo.stardict.MainActivity;
+
 import java.io.*;
 
 public class LinuxCmd
@@ -19,7 +21,7 @@ public class LinuxCmd
         // 解压 .tar.bz2 文件
         File bz2_file = new File(bz2_file_path);
         String bz2_dir = bz2_file.getParent();
-        String cmd = "tar -xjvf " + bz2_file_path + " -C " + bz2_dir;
+        String cmd = MainActivity.busy_box_path + "tar -xjvf " + bz2_file_path + " -C " + bz2_dir;
 
         String[] result = getCmdReadLine(cmd, bz2_dir);
 

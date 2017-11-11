@@ -1,6 +1,9 @@
 package me.zogodo.stardict.cmd;
 
 import android.app.Activity;
+import android.app.DownloadManager;
+import android.content.Context;
+import android.net.Uri;
 import android.os.Environment;
 
 import java.io.*;
@@ -39,10 +42,10 @@ public class AndroidHelp
         return file_string;
     }
 
-    public void writeRawToFile(Activity act, String dic_file_name, int file_id) throws IOException
+    public void writeRawToFile(Activity act, String file_save_path, int file_id) throws IOException
     {
         //将Raw中的文件写入指定目录
-        File dic_file = new File(dic_file_name);
+        File dic_file = new File(file_save_path);
         InputStream stream = act.getResources().openRawResource(file_id);
         dic_file.createNewFile();
         FileOutputStream outputStream = new FileOutputStream(dic_file.getPath());
@@ -55,4 +58,37 @@ public class AndroidHelp
         outputStream.close();
         stream.close();
     }
+
+    public long downloadFileToSdPath(Activity act, String file_url, String sd_path)
+    {
+        //下载文件到 SD 卡目录
+
+        //获取文件名
+        String[] url_split = file_url.split("/");
+        String file_name = url_split[url_split.length - 1];
+
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(file_url));
+        request.setDestinationInExternalPublicDir(sd_path, file_name); //下载到SD卡的 sd_path/ 目录
+
+        DownloadManager downloadManager= (DownloadManager) act.getSystemService(Context.DOWNLOAD_SERVICE);
+        return downloadManager.enqueue(request);
+    }
+
+    public long downloadFileToDataPath(Activity act, String file_url, String data_path)
+    {
+        //下载文件到应用数据目录
+
+        //获取文件名
+        String[] url_split = file_url.split("/");
+        String file_name = url_split[url_split.length - 1];
+
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(file_url));
+        //下载到 /SD卡/Android/data/包名/files/data_path/ 里
+        request.setDestinationInExternalFilesDir(act, data_path, file_name);
+
+        DownloadManager downloadManager = (DownloadManager)act.getSystemService(Context.DOWNLOAD_SERVICE);
+        //把id保存好，在接收者里面要用，最好保存在Preferences里面
+        return downloadManager.enqueue(request);
+    }
+
 }

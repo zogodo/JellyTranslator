@@ -1,7 +1,5 @@
 package me.zogodo.stardict;
 
-import android.app.DownloadManager;
-import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -11,10 +9,7 @@ import android.widget.SimpleAdapter;
 import android.widget.Toast;
 import me.zogodo.stardict.cmd.AndroidHelp;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -37,9 +32,9 @@ public class AllDict extends AppCompatActivity
             e.printStackTrace();
         }
     }
-    public String[] cn_dic_list = null;
+    private String[] cn_dic_list = null;
 
-    public void updateListView() throws IOException
+    private void updateListView() throws IOException
     {
         ListView lv = (ListView) findViewById(R.id.listView2);
         ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String, Object>>();
@@ -70,27 +65,18 @@ public class AllDict extends AppCompatActivity
             //长按ListView Item
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id)
             {
+                String dic_name = cn_dic_list[position*3];
                 String file_url = cn_dic_list[position*3 + 1];
-                DownloadDict(file_url);
+                DownloadDict(dic_name, file_url);
                 return true;
             }
         });
     }
 
-    protected long DownloadDict(String file_url)
+    private long DownloadDict(String dic_name, String file_url)
     {
         //下载字典文件
-        DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-        Uri uri = Uri.parse(file_url);
-        DownloadManager.Request request = new DownloadManager.Request(uri);
-        request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE | DownloadManager.Request.NETWORK_WIFI);
-        String[] url_split = file_url.split("/");
-        String file_name = url_split[url_split.length - 1];
-        //下载到 /mnt/sdcard/Android/data/packageName/files/dict/ 里
-        request.setDestinationInExternalFilesDir(this, "dict", file_name);
-        //request.setDestinationInExternalPublicDir("dict", )
-        //TODO 把id保存好，在接收者里面要用，最好保存在Preferences里面
-        return downloadManager.enqueue(request);
+        return AndroidHelp.me.downloadFileToDataPath(this, file_url, "en_dic");
     }
 
 }
