@@ -1,7 +1,7 @@
 /**
  * Created by zogod on 2016/11/27.
  */
-package me.zogodo.stardict.cmd;
+package me.zogodo.tools;
 
 import me.zogodo.stardict.MainActivity;
 

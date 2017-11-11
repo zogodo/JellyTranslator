@@ -32,7 +32,7 @@
         <activity android:name=".AllDict">
         </activity>
 
-        <receiver android:name=".cmd.DownloadCompleteReceiver">
+        <receiver android:name="me.zogodo.android.DownloadCompleteReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.DOWNLOAD_COMPLETE"/>
                 <action android:name="android.intent.action.DOWNLOAD_NOTIFICATION_CLICKED"/>

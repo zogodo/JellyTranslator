@@ -1,4 +1,4 @@
-package me.zogodo.stardict.cmd;
+package me.zogodo.tools;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;

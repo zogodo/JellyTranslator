@@ -1,9 +1,10 @@
-package me.zogodo.stardict.cmd;
+package me.zogodo.dict;
+
+import me.zogodo.tools.ReadFile;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;

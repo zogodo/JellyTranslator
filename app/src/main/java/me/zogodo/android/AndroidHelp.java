@@ -1,4 +1,4 @@
-package me.zogodo.stardict.cmd;
+package me.zogodo.android;
 
 import android.app.Activity;
 import android.app.DownloadManager;

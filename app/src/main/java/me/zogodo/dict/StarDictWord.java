@@ -1,4 +1,4 @@
-package me.zogodo.stardict.cmd;
+package me.zogodo.dict;
 
 /**
  * Created by zogod on 17/5/5.

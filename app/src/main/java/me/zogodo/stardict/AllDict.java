@@ -7,7 +7,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
-import me.zogodo.stardict.cmd.AndroidHelp;
+import me.zogodo.android.AndroidHelp;
 
 import java.io.IOException;
 import java.util.ArrayList;

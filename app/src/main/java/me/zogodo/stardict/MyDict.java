@@ -2,12 +2,10 @@ package me.zogodo.stardict;
 
 import android.preference.ListPreference;
 import android.preference.Preference;
-import android.preference.PreferenceActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import me.zogodo.stardict.R;
+import me.zogodo.android.AppCompatPreferenceActivity;
 
 import java.io.IOException;
 import java.util.ArrayList;

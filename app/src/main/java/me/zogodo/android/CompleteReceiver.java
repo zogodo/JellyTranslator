@@ -1,4 +1,4 @@
-package me.zogodo.stardict.cmd;
+package me.zogodo.android;
 
 /**
  * Created by zogod on 2016/11/14.

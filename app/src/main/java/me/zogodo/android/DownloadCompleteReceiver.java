@@ -1,7 +1,7 @@
 /**
  * Created by zogod on 2016/11/27.
  */
-package me.zogodo.stardict.cmd;
+package me.zogodo.android;
 
 import android.app.DownloadManager;
 import android.app.DownloadManager.Query;
@@ -11,8 +11,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.widget.Toast;
 import me.zogodo.stardict.MainActivity;
-
-import java.io.IOException;
+import me.zogodo.tools.LinuxCmd;
 
 public class DownloadCompleteReceiver extends BroadcastReceiver
 {

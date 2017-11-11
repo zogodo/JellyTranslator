@@ -1,4 +1,4 @@
-package me.zogodo.stardict;
+package me.zogodo.android;
 
 import android.content.res.Configuration;
 import android.os.Bundle;

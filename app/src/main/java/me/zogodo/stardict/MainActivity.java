@@ -13,10 +13,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import me.zogodo.stardict.cmd.AndroidHelp;
-import me.zogodo.stardict.cmd.LinuxCmd;
-import me.zogodo.stardict.cmd.StarDictWord;
-import me.zogodo.stardict.cmd.StarDict;
+import me.zogodo.android.AndroidHelp;
+import me.zogodo.tools.LinuxCmd;
+import me.zogodo.dict.StarDictWord;
+import me.zogodo.dict.StarDict;
 
 import java.io.File;
 import java.io.IOException;
