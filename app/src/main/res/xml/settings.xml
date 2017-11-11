@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="General Settings">
+        <CheckBoxPreference android:key="enabled"  android:title="Application Status" android:summary="Enable or disable the application" />
+        <ListPreference
+                android:key="language"
+                android:title="Language"
+                android:dialogTitle="Application language"
+                android:summary="%s"
+        />
+        <!--android:summary="Select the Application language"-->
+    </PreferenceCategory>
+</PreferenceScreen>

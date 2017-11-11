@@ -1,5 +1,8 @@
 package me.zogodo.stardict;
 
+import android.preference.ListPreference;
+import android.preference.Preference;
+import android.preference.PreferenceActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ListView;
@@ -10,23 +13,48 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class MyDict extends AppCompatActivity
+public class MyDict extends AppCompatPreferenceActivity
 {
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_dict);
+        //setContentView(R.layout.activity_my_dict);
+
+        // try
+        // {
+        //     updateListView();
+        // }
+        // catch (IOException e)
+        // {
+        //     e.printStackTrace();
+        // }
 
         try
         {
-            updateListView();
+            addPreferencesFromResource(R.xml.settings);
         }
-        catch (IOException e)
+        catch (Exception e)
         {
-            e.printStackTrace();
+
         }
+
+        final ListPreference listPreference = (ListPreference) findPreference("language");
+
+        // THIS IS REQUIRED IF YOU DON'T HAVE 'entries' and 'entryValues' in your XML
+        setListPreferenceData(listPreference);
+
+        listPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener()
+        {
+            @Override
+            public boolean onPreferenceClick(Preference preference)
+            {
+
+                setListPreferenceData(listPreference);
+                return false;
+            }
+        });
     }
 
     public void updateListView() throws IOException
@@ -48,4 +76,14 @@ public class MyDict extends AppCompatActivity
                 new int[]{R.id.text1, R.id.text2});
         lv.setAdapter(mSimpleAdapter);
     }
+
+    protected static void setListPreferenceData(ListPreference lp)
+    {
+        CharSequence[] entries = {"English", "French"};
+        CharSequence[] entryValues = {"1", "2"};
+        lp.setEntries(entries);
+        lp.setDefaultValue("1");
+        lp.setEntryValues(entryValues);
+    }
+
 }
