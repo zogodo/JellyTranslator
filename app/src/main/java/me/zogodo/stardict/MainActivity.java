@@ -1,7 +1,10 @@
 package me.zogodo.stardict;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,6 +17,7 @@ import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import me.zogodo.android.AndroidHelp;
+import me.zogodo.android.AppSetting;
 import me.zogodo.tools.LinuxCmd;
 import me.zogodo.dict.StarDictWord;
 import me.zogodo.dict.StarDict;
@@ -31,13 +35,11 @@ public class MainActivity extends AppCompatActivity
     public static StarDict dic_now;
     StarDictWord word_now = new StarDictWord();
 
-    public static String PACKAGE_NAME;             //应用包名
-    public static String app_root_data_path;       //数据文件夹路径
-    public static String sd_root;                  //
-    public static String app_sd_data_path;         //SD卡里的数据文件夹
-    public static String root_dic_path;            //
-    public static String sd_dic_path;              //SD卡根路径
-    public static String busy_box_path;            //BusyBox路径
+    public static String PACKAGE_NAME;        //应用包名
+    public static String root_data_dir;       //数据文件夹
+    public static String sd_data_dir;         //SD卡里的数据文件夹
+    public static String sd_data_dic_dir;     //字典存放文件夹
+    public static String busy_box_path;       //BusyBox路径
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -45,33 +47,31 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        PACKAGE_NAME = getPackageName();
-        app_root_data_path = Environment.getDataDirectory().getAbsolutePath() + "/data/"  + PACKAGE_NAME;
-        if (AndroidHelp.me.isExternalStorageWritable())  //是否有卡
-        {
-            sd_root = Environment.getExternalStorageDirectory().getAbsolutePath();
-            app_sd_data_path = sd_root + "/Android/data/" + PACKAGE_NAME;
-        }
-        root_dic_path = app_root_data_path + "/dict";
-        sd_dic_path = app_sd_data_path + "/files/dict/";
-        busy_box_path = app_root_data_path + "/cmd/busybox_armv7l";
+        File ext_dir = getExternalFilesDir(null);
+        File ine_dir = getFilesDir();
 
-        File dic_path_file = new File(root_dic_path);
+        root_data_dir = ine_dir.getPath();
+        sd_data_dir = ext_dir.getPath();
+        sd_data_dic_dir = sd_data_dir + "/dict";
+        busy_box_path = root_data_dir + "/cmd/busybox_armv7l";
+
+        File dic_path_file = new File(root_data_dir + "/cmd");
         if (!dic_path_file.exists())
         {
             //第一次打开应用
-            dic_path_file.mkdir();
-            new File(app_root_data_path + "/cmd").mkdir();
+            dic_path_file.mkdirs();
+            new File(sd_data_dic_dir + "/en/default").mkdirs();
+            new File(sd_data_dic_dir + "/cn/default").mkdirs();
             try
             {
                 //英汉
-                AndroidHelp.me.writeRawToFile(this, root_dic_path + "/e2c_dic.idx", R.raw.e2c_idx);
-                AndroidHelp.me.writeRawToFile(this, root_dic_path + "/e2c_dic.dict", R.raw.e2c_dic);
-                AndroidHelp.me.writeRawToFile(this, root_dic_path + "/e2c_dic.ifo", R.raw.e2c_ifo);
+                AndroidHelp.me.writeRawToFile(this, sd_data_dic_dir + "/en/default/e2c_dic.idx", R.raw.e2c_idx);
+                AndroidHelp.me.writeRawToFile(this, sd_data_dic_dir + "/en/default/e2c_dic.dict", R.raw.e2c_dic);
+                AndroidHelp.me.writeRawToFile(this, sd_data_dic_dir + "/en/default/e2c_dic.ifo", R.raw.e2c_ifo);
                 //汉英
-                AndroidHelp.me.writeRawToFile(this, root_dic_path + "/c2e_dic.idx", R.raw.c2e_idx);
-                AndroidHelp.me.writeRawToFile(this, root_dic_path + "/c2e_dic.dict", R.raw.c2e_dic);
-                AndroidHelp.me.writeRawToFile(this, root_dic_path + "/c2e_dic.ifo", R.raw.c2e_ifo);
+                AndroidHelp.me.writeRawToFile(this, sd_data_dic_dir + "/cn/default/c2e_dic.idx", R.raw.c2e_idx);
+                AndroidHelp.me.writeRawToFile(this, sd_data_dic_dir + "/cn/default/c2e_dic.dict", R.raw.c2e_dic);
+                AndroidHelp.me.writeRawToFile(this, sd_data_dic_dir + "/cn/default/c2e_dic.ifo", R.raw.c2e_ifo);
                 //BusyBox
                 AndroidHelp.me.writeRawToFile(this, busy_box_path, R.raw.busybox_armv7l);
 
@@ -85,18 +85,19 @@ public class MainActivity extends AppCompatActivity
         }
         busy_box_path += " ";
 
+        AppSetting setting = AppSetting.getSetting(this);
+
         Long time0 = System.currentTimeMillis();
         try
         {
-            e2c_dic = new StarDict(root_dic_path + "/", "e2c_dic");
-            c2e_dic = new StarDict(root_dic_path + "/", "c2e_dic");
+            e2c_dic = new StarDict(sd_data_dic_dir + "/en/"+setting.en_dic_name+"/", setting.en_dic_file_name);
+            c2e_dic = new StarDict(sd_data_dic_dir + "/cn/"+setting.cn_dic_name+"/", setting.cn_dic_file_name);
             dic_now = e2c_dic;
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
-
         Log.e("22222", ((Long)(System.currentTimeMillis() - time0)).toString());
     }
 

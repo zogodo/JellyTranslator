@@ -79,12 +79,12 @@ public class AllDict extends AppCompatActivity
         if(dic_name.contains("汉") && !dic_name.contains("英汉"))
         {
             //汉语词典
-            return AndroidHelp.me.downloadFileToDataPath(this, file_url, "cn_dic");
+            return AndroidHelp.me.downloadFileToDataPath(this, file_url, "dict/cn");
         }
         else
         {
             //英语词典
-            return AndroidHelp.me.downloadFileToDataPath(this, file_url, "en_dic");
+            return AndroidHelp.me.downloadFileToDataPath(this, file_url, "dict/en");
         }
     }
 

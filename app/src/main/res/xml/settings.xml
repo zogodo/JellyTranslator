@@ -1,13 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory android:title="General Settings">
-        <CheckBoxPreference android:key="enabled"  android:title="Application Status" android:summary="Enable or disable the application" />
-        <ListPreference
-                android:key="language"
-                android:title="Language"
-                android:dialogTitle="Application language"
-                android:summary="%s"
+    <PreferenceCategory android:title="选择我的字典">
+        <CheckBoxPreference
+                android:key="enabled"
+                android:title="测试设置"
+                android:summary="这是一个没有用的设置～"
         />
-        <!--android:summary="Select the Application language"-->
+        <ListPreference
+                android:key="en_dic"
+                android:title="英语词典"
+                android:dialogTitle="选择英语词典"
+                android:summary="%s"
+                android:defaultValue="default/e2c_dic"
+        />
+        <ListPreference
+                android:key="cn_dic"
+                android:title="汉语词典"
+                android:dialogTitle="选择汉语词典"
+                android:summary="%s"
+                android:defaultValue="default/c2e_dic"
+        />
     </PreferenceCategory>
 </PreferenceScreen>
