@@ -3,7 +3,7 @@
  */
 package me.zogodo.tools;
 
-import me.zogodo.stardict.MainActivity;
+import me.zogodo.stardict2.MainActivity;
 
 import java.io.*;
 

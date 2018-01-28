@@ -1,4 +1,4 @@
-package me.zogodo.stardict;
+package me.zogodo.stardict2;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

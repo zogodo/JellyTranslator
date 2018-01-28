@@ -1,4 +1,4 @@
-package me.zogodo.stardict;
+package me.zogodo.stardict2;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

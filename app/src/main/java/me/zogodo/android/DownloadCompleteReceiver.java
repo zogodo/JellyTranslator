@@ -10,7 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.widget.Toast;
-import me.zogodo.stardict.MainActivity;
+import me.zogodo.stardict2.MainActivity;
 import me.zogodo.tools.FileName;
 import me.zogodo.tools.LinuxCmd;
 
@@ -40,7 +40,6 @@ public class DownloadCompleteReceiver extends BroadcastReceiver
             try
             {
                 String[] result = LinuxCmd.exportBz2FIle(file_path);
-                String dic_name = GetDicFileName(result);
                 // 重命名字典内容文件 .dz -> .gz
                 String cmd = "mv " + dic_dir + "/" + result[1] + " "
                         + dic_dir + "/" + result[1].replace(".dict.dz", ".dict.gz");
@@ -56,23 +55,5 @@ public class DownloadCompleteReceiver extends BroadcastReceiver
                 e.printStackTrace();
             }
         }
-    }
-
-    public String GetDicFileName(String[] result)
-    {
-        String dic_name = result[1].replaceAll(result[0], "");
-        if(dic_name.contains(".dict.dz"))
-        {
-            dic_name = dic_name.replaceAll(".dict.dz", "");
-        }
-        else if(dic_name.contains(".idx"))
-        {
-            dic_name = dic_name.replaceAll(".idx", "");
-        }
-        else if(dic_name.contains(".ifo"))
-        {
-            dic_name = dic_name.replaceAll(".ifo", "");
-        }
-        return dic_name;
     }
 }
