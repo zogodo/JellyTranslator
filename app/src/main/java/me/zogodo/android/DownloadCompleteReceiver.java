@@ -9,6 +9,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.widget.Toast;
 import me.zogodo.stardict2.MainActivity;
 import me.zogodo.tools.FileName;
@@ -31,7 +32,9 @@ public class DownloadCompleteReceiver extends BroadcastReceiver
             Cursor cursor = downloadManager.query(query);
             cursor.moveToNext();
             String file_name = cursor.getString(4);
-            String file_path = cursor.getString(1);
+            int col = cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI);
+            String file_uri = cursor.getString(col);
+            String file_path = Uri.parse(file_uri).getPath();
             String dic_dir = FileName.getDir(file_path);
 
             cursor.close();
