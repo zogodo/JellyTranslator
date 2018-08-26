@@ -27,7 +27,7 @@ public class LinuxCmd
 
         // 删除字典压缩包
         cmd = "rm " + bz2_file_path;
-        PerformCmd(cmd);
+        getCmdReadLine(cmd);
 
         return result;
     }

@@ -46,11 +46,11 @@ public class DownloadCompleteReceiver extends BroadcastReceiver
                 // 重命名字典内容文件 .dz -> .gz
                 String cmd = "mv " + dic_dir + "/" + result[1] + " "
                         + dic_dir + "/" + result[1].replace(".dict.dz", ".dict.gz");
-                LinuxCmd.PerformCmd(cmd);
+                LinuxCmd.getCmdReadLine(cmd);
                 // 解压字典内容文件
                 cmd = MainActivity.busy_box_path + "gunzip " + dic_dir + "/"
                         + result[1].replace(".dict.dz", ".dict.gz");
-                LinuxCmd.PerformCmd(cmd);
+                LinuxCmd.getCmdReadLine(cmd);
                 Toast.makeText(context, "字典下载成功。", Toast.LENGTH_LONG).show();
             }
             catch (Exception e)
