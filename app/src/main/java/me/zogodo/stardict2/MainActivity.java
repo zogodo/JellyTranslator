@@ -56,18 +56,18 @@ public class MainActivity extends AppCompatActivity
         {
             //第一次打开应用
             dic_path_file.mkdirs();
-            new File(sd_data_dic_dir + "/en/default").mkdirs();
-            new File(sd_data_dic_dir + "/cn/default").mkdirs();
+            new File(sd_data_dic_dir + "/default_e2c").mkdirs();
+            new File(sd_data_dic_dir + "/default_c2e").mkdirs();
             try
             {
                 //英汉
-                AndroidHelp.me.writeRawToFile(this, sd_data_dic_dir + "/en/default/e2c_dic.idx", R.raw.e2c_idx);
-                AndroidHelp.me.writeRawToFile(this, sd_data_dic_dir + "/en/default/e2c_dic.dict", R.raw.e2c_dic);
-                AndroidHelp.me.writeRawToFile(this, sd_data_dic_dir + "/en/default/e2c_dic.ifo", R.raw.e2c_ifo);
+                AndroidHelp.me.writeRawToFile(this, sd_data_dic_dir + "/default_e2c/e2c_dic.idx", R.raw.e2c_idx);
+                AndroidHelp.me.writeRawToFile(this, sd_data_dic_dir + "/default_e2c/e2c_dic.dict", R.raw.e2c_dic);
+                AndroidHelp.me.writeRawToFile(this, sd_data_dic_dir + "/default_e2c/e2c_dic.ifo", R.raw.e2c_ifo);
                 //汉英
-                AndroidHelp.me.writeRawToFile(this, sd_data_dic_dir + "/cn/default/c2e_dic.idx", R.raw.c2e_idx);
-                AndroidHelp.me.writeRawToFile(this, sd_data_dic_dir + "/cn/default/c2e_dic.dict", R.raw.c2e_dic);
-                AndroidHelp.me.writeRawToFile(this, sd_data_dic_dir + "/cn/default/c2e_dic.ifo", R.raw.c2e_ifo);
+                AndroidHelp.me.writeRawToFile(this, sd_data_dic_dir + "/default_c2e/c2e_dic.idx", R.raw.c2e_idx);
+                AndroidHelp.me.writeRawToFile(this, sd_data_dic_dir + "/default_c2e/c2e_dic.dict", R.raw.c2e_dic);
+                AndroidHelp.me.writeRawToFile(this, sd_data_dic_dir + "/default_c2e/c2e_dic.ifo", R.raw.c2e_ifo);
                 //BusyBox
                 AndroidHelp.me.writeRawToFile(this, busy_box_path, R.raw.busybox_armv7l);
 
@@ -86,8 +86,8 @@ public class MainActivity extends AppCompatActivity
         Long time0 = System.currentTimeMillis();
         try
         {
-            e2c_dic = new StarDict(sd_data_dic_dir + "/en/"+setting.en_dic_name+"/", setting.en_dic_file_name);
-            c2e_dic = new StarDict(sd_data_dic_dir + "/cn/"+setting.cn_dic_name+"/", setting.cn_dic_file_name);
+            e2c_dic = new StarDict(sd_data_dic_dir + "/"+setting.en_dic_name+"/", setting.en_dic_file_name);
+            c2e_dic = new StarDict(sd_data_dic_dir + "/"+setting.cn_dic_name+"/", setting.cn_dic_file_name);
             dic_now = e2c_dic;
         }
         catch (Exception e)

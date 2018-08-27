@@ -11,14 +11,14 @@
                 android:title="英语词典"
                 android:dialogTitle="选择英语词典"
                 android:summary="%s"
-                android:defaultValue="default/e2c_dic"
+                android:defaultValue="default_e2c/e2c_dic"
         />
         <ListPreference
                 android:key="cn_dic"
                 android:title="汉语词典"
                 android:dialogTitle="选择汉语词典"
                 android:summary="%s"
-                android:defaultValue="default/c2e_dic"
+                android:defaultValue="default_c2e/c2e_dic"
         />
     </PreferenceCategory>
 </PreferenceScreen>

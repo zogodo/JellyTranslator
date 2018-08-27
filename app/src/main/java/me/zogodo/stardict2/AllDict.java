@@ -145,7 +145,7 @@ public class AllDict extends AppCompatActivity
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id)
             {
                 String file_url = srclist.get(position);
-                AndroidHelp.me.downloadFileToDataPath(AllDict.this, file_url, "dict/cn");
+                AndroidHelp.me.downloadFileToDataPath(AllDict.this, file_url, "dict");
                 return true;
             }
         });
