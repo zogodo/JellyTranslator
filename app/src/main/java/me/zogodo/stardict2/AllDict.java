@@ -70,8 +70,6 @@ public class AllDict extends AppCompatActivity
         return true;
     }
 
-    private String[] cn_dic_list = null;
-
     private SQLiteDatabase db;
 
     private SQLiteDatabase openDateBase(String db_file_path)
@@ -105,52 +103,30 @@ public class AllDict extends AppCompatActivity
 
     public void updateListView(int dict_type_id)
     {
-        Cursor cursor = db.rawQuery("select rowid _id, dict_name, type_name||' '||word_count as dict_info " +
+        Cursor cursor = db.rawQuery("select dict_name, type_name||' '||word_count as dict_info, down_src " +
                 "from v_all_dict where dict_type_id="+dict_type_id, null);
 
-        ListView lv = (ListView) findViewById(R.id.listView2);//得到ListView对象的引用 /*为ListView设置Adapter来绑定数据*/
+        ListView lv = (ListView) findViewById(R.id.listView2);//得到ListView对象的引用, 为ListView设置Adapter来绑定数据
+        /*
         SimpleCursorAdapter adapter = new SimpleCursorAdapter(
                 this,
                 R.layout.simple_list_item_2,
                 cursor, new String[]{"dict_name", "dict_info"},
                 new int[]{R.id.text1, R.id.text2});
         lv.setAdapter(adapter);
-
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener()
-        {
-            //单击ListView Item
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-            {
-                Toast.makeText(getApplicationContext(), "长按下载此字典", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener()
-        {
-            //长按ListView Item
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id)
-            {
-                String file_url = "";
-                AndroidHelp.me.downloadFileToDataPath(AllDict.this, file_url, "dict/cn");
-                return true;
-            }
-        });
-    }
-
-    private void updateListView() throws IOException
-    {
-        ListView lv = (ListView) findViewById(R.id.listView2);
+        */
         ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String, Object>>();
-        for (int i = 0; i < 333; i += 3)
+        final ArrayList<String> srclist = new ArrayList<>();
+        while (cursor.moveToNext())
         {
             HashMap<String, Object> map = new HashMap<String, Object>();
-            map.put("dic_name", cn_dic_list[i]);
-            map.put("dic_info", cn_dic_list[i + 2]);
+            map.put("dict_name", cursor.getString(cursor.getColumnIndex("dict_name")));
+            map.put("dict_info", cursor.getString(cursor.getColumnIndex("dict_info")));
+            srclist.add(cursor.getString(cursor.getColumnIndex("down_src")));
             listItem.add(map);
         }
-
         SimpleAdapter mSimpleAdapter = new SimpleAdapter(this,
-                listItem, R.layout.simple_list_item_2, new String[]{"dic_name", "dic_info"},
+                listItem, R.layout.simple_list_item_2, new String[]{"dict_name", "dict_info"},
                 new int[]{R.id.text1, R.id.text2});
         lv.setAdapter(mSimpleAdapter);
 
@@ -168,27 +144,11 @@ public class AllDict extends AppCompatActivity
             //长按ListView Item
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id)
             {
-                String dic_name = cn_dic_list[position * 3];
-                String file_url = cn_dic_list[position * 3 + 1];
-                DownloadDict(dic_name, file_url);
+                String file_url = srclist.get(position);
+                AndroidHelp.me.downloadFileToDataPath(AllDict.this, file_url, "dict/cn");
                 return true;
             }
         });
-    }
-
-    private long DownloadDict(String dic_name, String file_url)
-    {
-        //下载字典文件
-        if (dic_name.contains("汉") && !dic_name.contains("英汉"))
-        {
-            //汉语词典
-            return AndroidHelp.me.downloadFileToDataPath(this, file_url, "dict/cn");
-        }
-        else
-        {
-            //英语词典
-            return AndroidHelp.me.downloadFileToDataPath(this, file_url, "dict/en");
-        }
     }
 
 }

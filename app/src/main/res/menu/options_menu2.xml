@@ -6,6 +6,8 @@
         android:title="翻译"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
         app:showAsAction="always"
         app:actionViewClass="android.widget.Spinner" />
 
