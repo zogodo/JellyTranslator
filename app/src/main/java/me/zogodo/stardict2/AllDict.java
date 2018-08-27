@@ -3,8 +3,12 @@ package me.zogodo.stardict2;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 import me.zogodo.android.AndroidHelp;
@@ -25,23 +29,45 @@ public class AllDict extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_dict);
 
-        /*
-        try
-        {
-            cn_dic_list = AndroidHelp.me.readTextFileByLinesFromRaw(this, R.raw.cn_dic_list);
-            updateListView();
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        */
-
         String PACKAGE_NAME = getPackageName();//这个包名是你的应用程序在DDMS中file system中data下面的包名，这个位置容易出错，会写成当前的包
         String DB_NAME = "dictionary.db";//这个就是你要创建存到/data下的数据库的名字
-        String DB_PATH = "/sdcard/Android" + Environment.getDataDirectory().getAbsolutePath() + "/" + PACKAGE_NAME + "/files/Documents/" + DB_NAME ; // 存放路径
+        String DB_PATH = "/sdcard/Android" + Environment.getDataDirectory().getAbsolutePath() + "/" + PACKAGE_NAME + "/files/Documents/" + DB_NAME; // 存放路径
         db = this.openDateBase(DB_PATH);
-        updateListView2();
+        updateListView(1);
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        getMenuInflater().inflate(R.menu.options_menu2, menu);
+        final MenuItem item_s = menu.findItem(R.id.dic_types);
+        Spinner dic_types = (Spinner) MenuItemCompat.getActionView(item_s);
+        ArrayList<String> list1 = new ArrayList<>();
+        final ArrayList<Integer> list2 = new ArrayList<>();
+        Cursor cursor = db.rawQuery("select id, type_name from dict_type", null);
+        while (cursor.moveToNext())
+        {
+            list1.add(cursor.getString(cursor.getColumnIndex("type_name")));
+            list2.add(cursor.getInt(cursor.getColumnIndex("id")));
+        }
+        SpinnerAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, list1);
+        dic_types.setAdapter(adapter);
+        dic_types.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+        {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id)
+            {
+                Integer type_id = list2.get(position);
+                updateListView(type_id);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView)
+            {
+                // your code here
+            }
+
+        });
+        return true;
     }
 
     private String[] cn_dic_list = null;
@@ -77,9 +103,10 @@ public class AllDict extends AppCompatActivity
         return SQLiteDatabase.openOrCreateDatabase(db_file_path, null);
     }
 
-    public void updateListView2()
+    public void updateListView(int dict_type_id)
     {
-        Cursor cursor = db.rawQuery("select rowid _id, dict_name, type_name||' '||word_count as dict_info from v_all_dict", null);
+        Cursor cursor = db.rawQuery("select rowid _id, dict_name, type_name||' '||word_count as dict_info " +
+                "from v_all_dict where dict_type_id="+dict_type_id, null);
 
         ListView lv = (ListView) findViewById(R.id.listView2);//得到ListView对象的引用 /*为ListView设置Adapter来绑定数据*/
         SimpleCursorAdapter adapter = new SimpleCursorAdapter(
