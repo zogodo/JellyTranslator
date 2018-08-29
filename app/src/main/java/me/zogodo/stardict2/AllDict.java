@@ -70,7 +70,7 @@ public class AllDict extends AppCompatActivity
         return true;
     }
 
-    private SQLiteDatabase db;
+    public static SQLiteDatabase db;
 
     private SQLiteDatabase openDateBase(String db_file_path)
     {

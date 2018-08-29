@@ -3,7 +3,9 @@
           package="me.zogodo.stardict2">
 
     <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="22" />
+    <uses-permission
+            android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+            android:maxSdkVersion="22"/>
 
     <application
             android:allowBackup="true"
@@ -11,18 +13,18 @@
             android:label="@string/app_name"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
-        <activity android:name="me.zogodo.stardict2.MainActivity">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name="me.zogodo.stardict2.WordDetail">
+        <activity android:name=".WordDetail">
         </activity>
-        <activity android:name="me.zogodo.stardict2.About">
+        <activity android:name=".About">
         </activity>
-        <activity android:name="me.zogodo.stardict2.AllDict">
+        <activity android:name=".AllDict">
         </activity>
 
         <receiver android:name="me.zogodo.android.DownloadCompleteReceiver">
@@ -32,9 +34,9 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name="me.zogodo.stardict2.MyDict">
+        <activity android:name=".MyDict">
         </activity>
-        <activity android:name="me.zogodo.stardict2.Helper">
+        <activity android:name=".Helper">
         </activity>
     </application>
 
