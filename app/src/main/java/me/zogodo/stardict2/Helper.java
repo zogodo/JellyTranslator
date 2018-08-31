@@ -6,11 +6,13 @@ import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 import me.zogodo.android.AndroidHelp;
+import me.zogodo.sqlite.SqliteHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,18 +25,25 @@ public class Helper extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_helper);
+
+        String DB_NAME = "dictionary.db";
+        String DB_PATH = MainActivity.sd_data_dir + "/Documents/" + DB_NAME; // 存放路径
+        db = SqliteHelper.getDB(this, DB_PATH);
         updateListView();
     }
 
+    private static SQLiteDatabase db;
+
+    int position = 0;
     public void updateListView()
     {
-        Cursor cursor = AllDict.db.rawQuery("select dict_name, selected, type_name||' '||word_count as dict_info, down_src " +
+        Cursor cursor = db.rawQuery("select dict_name, selected, type_name||' '||word_count as dict_info, down_src " +
                 "from v_my_dict order by id desc", null);
 
-        ListView lv = (ListView) findViewById(R.id.listView3);//得到ListView对象的引用, 为ListView设置Adapter来绑定数据
+        final ListView lv = (ListView) findViewById(R.id.listView3);//得到ListView对象的引用, 为ListView设置Adapter来绑定数据
         ArrayList<HashMap<String, Object>> listItem = new ArrayList<>();
         final ArrayList<String> srclist = new ArrayList<>();
-        int i = 0, position = 0;
+        int i = 0;
         while (cursor.moveToNext())
         {
             HashMap<String, Object> map = new HashMap<String, Object>();
@@ -53,6 +62,18 @@ public class Helper extends AppCompatActivity
         lv.setAdapter(mSimpleAdapter);
 
         // lv.getChildAt(position).setBackgroundColor(Color.BLUE);
+
+        final ViewTreeObserver.OnPreDrawListener mOnPreDrawListener = new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                lv.getViewTreeObserver().removeOnPreDrawListener(this);
+                // Do what you want to do on data loading here
+                lv.getChildAt(position).setBackgroundColor(Color.BLUE);
+                return true;
+            }
+        };
+
+        lv.getViewTreeObserver().addOnPreDrawListener(mOnPreDrawListener);
 
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {

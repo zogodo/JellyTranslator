@@ -46,8 +46,8 @@ public class MainActivity extends AppCompatActivity
         File ext_dir = getExternalFilesDir(null);
         File ine_dir = getFilesDir();
 
-        root_data_dir = ine_dir.getPath();
-        sd_data_dir = ext_dir.getPath();
+        root_data_dir = ine_dir.getPath();  // /data/user/0/me.zogodo.stardict2/files
+        sd_data_dir = ext_dir.getPath();    // /storage/emulated/0/Android/data/me.zogodo.stardict2/files
         sd_data_dic_dir = sd_data_dir + "/dict";
         busy_box_path = root_data_dir + "/cmd/busybox_armv7l";
 

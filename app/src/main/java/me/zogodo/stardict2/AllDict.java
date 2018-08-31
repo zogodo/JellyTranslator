@@ -1,5 +1,6 @@
 package me.zogodo.stardict2;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
@@ -12,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 import me.zogodo.android.AndroidHelp;
+import me.zogodo.sqlite.SqliteHelper;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -22,6 +24,8 @@ import java.util.HashMap;
 
 public class AllDict extends AppCompatActivity
 {
+    public static String DB_NAME;
+    public static String DB_PATH;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -29,12 +33,13 @@ public class AllDict extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_dict);
 
-        String PACKAGE_NAME = getPackageName();//这个包名是你的应用程序在DDMS中file system中data下面的包名，这个位置容易出错，会写成当前的包
-        String DB_NAME = "dictionary.db";//这个就是你要创建存到/data下的数据库的名字
-        String DB_PATH = "/sdcard/Android" + Environment.getDataDirectory().getAbsolutePath() + "/" + PACKAGE_NAME + "/files/Documents/" + DB_NAME; // 存放路径
-        db = this.openDateBase(DB_PATH);
+        DB_NAME = "dictionary.db";
+        DB_PATH = MainActivity.sd_data_dir + "/Documents/" + DB_NAME; // 存放路径
+        db = SqliteHelper.getDB(this, DB_PATH);
         updateListView(1);
     }
+
+    private static SQLiteDatabase db;
 
     public boolean onCreateOptionsMenu(Menu menu)
     {
@@ -68,37 +73,6 @@ public class AllDict extends AppCompatActivity
 
         });
         return true;
-    }
-
-    public static SQLiteDatabase db;
-
-    private SQLiteDatabase openDateBase(String db_file_path)
-    {
-        //传递进来的是一个数据库文件名: 这个文件就是你要在/data下面存储的数据库名
-        File file = new File(db_file_path);//打开这个文件
-        if (!file.exists())
-        {
-            InputStream stream = getResources().openRawResource(R.raw.stardict);
-            try
-            {
-                //新建/sdcard/Android/data/Package Name/files/Documents文件夹
-                File file4 = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
-                FileOutputStream outputStream = new FileOutputStream(db_file_path);
-                byte[] buffer = new byte[1024];
-                int count = 0;
-                while ((count = stream.read(buffer)) > 0)
-                {
-                    outputStream.write(buffer, 0, count);
-                }
-                outputStream.close();
-                stream.close();
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-        }
-        return SQLiteDatabase.openOrCreateDatabase(db_file_path, null);
     }
 
     public void updateListView(int dict_type_id)
