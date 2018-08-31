@@ -35,13 +35,14 @@ public class MyDict extends AppCompatActivity
     private static SQLiteDatabase db;
 
     int position = 0;
+    ArrayList<HashMap<String, Object>> listItem;
     public void updateListView()
     {
-        Cursor cursor = db.rawQuery("select dict_name, selected, type_name||' '||word_count as dict_info, down_src " +
+        Cursor cursor = db.rawQuery("select id, dict_name, selected, type_name||' '||word_count as dict_info, down_src " +
                 "from v_my_dict order by id desc", null);
 
         final ListView lv = (ListView) findViewById(R.id.listView3);//得到ListView对象的引用, 为ListView设置Adapter来绑定数据
-        ArrayList<HashMap<String, Object>> listItem = new ArrayList<>();
+        listItem = new ArrayList<>();
         final ArrayList<String> srclist = new ArrayList<>();
         int i = 0;
         while (cursor.moveToNext())
@@ -49,6 +50,7 @@ public class MyDict extends AppCompatActivity
             HashMap<String, Object> map = new HashMap<String, Object>();
             map.put("dict_name", cursor.getString(cursor.getColumnIndex("dict_name")));
             map.put("dict_info", cursor.getString(cursor.getColumnIndex("dict_info")));
+            map.put("dict_id", cursor.getInt(cursor.getColumnIndex("id")));
             srclist.add(cursor.getString(cursor.getColumnIndex("down_src")));
             listItem.add(map);
             if (cursor.getInt(cursor.getColumnIndex("selected")) == 1) {
@@ -63,9 +65,11 @@ public class MyDict extends AppCompatActivity
 
         // lv.getChildAt(position).setBackgroundColor(Color.BLUE);
 
-        final ViewTreeObserver.OnPreDrawListener mOnPreDrawListener = new ViewTreeObserver.OnPreDrawListener() {
+        final ViewTreeObserver.OnPreDrawListener mOnPreDrawListener = new ViewTreeObserver.OnPreDrawListener()
+        {
             @Override
-            public boolean onPreDraw() {
+            public boolean onPreDraw()
+            {
                 lv.getViewTreeObserver().removeOnPreDrawListener(this);
                 // Do what you want to do on data loading here
                 String color_string = "#99FFD7";
@@ -92,7 +96,14 @@ public class MyDict extends AppCompatActivity
             //长按ListView Item
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id)
             {
-
+                if (position == MyDict.this.position) return true;
+                String sql = "update my_dict set selected=0 where selected=1";
+                db.execSQL(sql);
+                int dict_id = (int)listItem.get(position).get("dict_id");
+                sql = "update my_dict set selected=1 where id=" + dict_id;
+                db.execSQL(sql);
+                updateListView();
+                //TODO MainActivity 换字典
                 return true;
             }
         });
