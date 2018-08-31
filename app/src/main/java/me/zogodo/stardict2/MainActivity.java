@@ -224,8 +224,8 @@ public class MainActivity extends AppCompatActivity
         Intent intent = null;
         switch (item.getItemId())
         {
-            case R.id.help:
-                intent = new Intent(MainActivity.this, Helper.class);
+            case R.id.myDict:
+                intent = new Intent(MainActivity.this, MyDict.class);
                 startActivity(intent);
                 setResult(RESULT_OK,intent);
                 return true;
@@ -236,13 +236,13 @@ public class MainActivity extends AppCompatActivity
                 setResult(RESULT_OK,intent);
                 return true;
             case R.id.downloadDict:
-                intent = new Intent(MainActivity.this, AllDict.class);
+                intent = new Intent(MainActivity.this, DownloadDict.class);
                 //intent.putExtra("dic_now", dic_now);
                 startActivity(intent);
                 setResult(RESULT_OK,intent);
                 return true;
-            case R.id.myDict:
-                intent = new Intent(MainActivity.this, MyDict.class);
+            case R.id.setting:
+                intent = new Intent(MainActivity.this, Setting.class);
                 startActivity(intent);
                 setResult(RESULT_OK,intent);
                 return true;

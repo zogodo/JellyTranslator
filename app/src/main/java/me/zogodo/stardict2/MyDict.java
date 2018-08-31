@@ -1,122 +1,100 @@
 package me.zogodo.stardict2;
 
-import android.preference.ListPreference;
-import android.preference.Preference;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import me.zogodo.android.AppCompatPreferenceActivity;
-import me.zogodo.tools.FileName;
+import android.view.View;
+import android.view.ViewTreeObserver;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
+import android.widget.Toast;
+import me.zogodo.android.AndroidHelp;
+import me.zogodo.sqlite.SqliteHelper;
 
-import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 
-public class MyDict extends AppCompatPreferenceActivity
+public class MyDict extends AppCompatActivity
 {
-    static ArrayList<String> cn_dic_names;
-    static ArrayList<String> cn_dic_values;
-    static ArrayList<String> en_dic_names;
-    static ArrayList<String> en_dic_values;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_helper);
 
-        addPreferencesFromResource(R.xml.settings);
-
-        //英文字典列表
-        ListPreference lst_pre1 = (ListPreference)findPreference("en_dic");
-        setListPreference(lst_pre1, "en");
-
-        //中文字典列表
-        ListPreference lst_pre2 = (ListPreference)findPreference("cn_dic");
-        setListPreference(lst_pre2, "cn");
+        String DB_NAME = "dictionary.db";
+        String DB_PATH = MainActivity.sd_data_dir + "/Documents/" + DB_NAME; // 存放路径
+        db = SqliteHelper.getDB(this, DB_PATH);
+        updateListView();
     }
 
-    String getDicName(File dir, ArrayList<String> dic_values)
+    private static SQLiteDatabase db;
+
+    int position = 0;
+    public void updateListView()
     {
-        File[] dic_file3 = dir.listFiles();
-        if(dic_file3.length <= 0)
-        {
-            return dir.getName();
-        }
-        dic_values.set(
-                dic_values.size() - 1,
-                dic_values.get(dic_values.size() - 1) + "/"
-                    + FileName.removeExtension(dic_file3[0].getName())
-        );
+        Cursor cursor = db.rawQuery("select dict_name, selected, type_name||' '||word_count as dict_info, down_src " +
+                "from v_my_dict order by id desc", null);
 
-        for(File ifo_file : dic_file3)
+        final ListView lv = (ListView) findViewById(R.id.listView3);//得到ListView对象的引用, 为ListView设置Adapter来绑定数据
+        ArrayList<HashMap<String, Object>> listItem = new ArrayList<>();
+        final ArrayList<String> srclist = new ArrayList<>();
+        int i = 0;
+        while (cursor.moveToNext())
         {
-            if(ifo_file.getName().endsWith(".ifo"))
-            {
-                try (BufferedReader br = new BufferedReader(new FileReader(ifo_file)))
-                {
-                    String line;
-                    while ((line = br.readLine()) != null)
-                    {
-                        if(line.startsWith("bookname="))
-                        {
-                            return line.replace("bookname=", "");
-                        }
-                    }
-                }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-                }
+            HashMap<String, Object> map = new HashMap<String, Object>();
+            map.put("dict_name", cursor.getString(cursor.getColumnIndex("dict_name")));
+            map.put("dict_info", cursor.getString(cursor.getColumnIndex("dict_info")));
+            srclist.add(cursor.getString(cursor.getColumnIndex("down_src")));
+            listItem.add(map);
+            if (cursor.getInt(cursor.getColumnIndex("selected")) == 1) {
+                position = i;
             }
+            i++;
         }
-        return dir.getName();
-    }
+        SimpleAdapter mSimpleAdapter = new SimpleAdapter(this,
+                listItem, R.layout.simple_list_item_2, new String[]{"dict_name", "dict_info"},
+                new int[]{R.id.text1, R.id.text2});
+        lv.setAdapter(mSimpleAdapter);
 
-    void setListPreference(ListPreference lst_pre, String type)
-    {
-        ArrayList<String> dic_names;
-        ArrayList<String> dic_values;
-        String dic_file_name;
-        if (type.equals("en"))
-        {
-            dic_names = en_dic_names = new ArrayList<>();
-            dic_values = en_dic_values = new ArrayList<>();
-            dic_file_name = "e2c_dic";
-        }
-        else
-        {
-            dic_names = cn_dic_names = new ArrayList<>();
-            dic_values = cn_dic_values = new ArrayList<>();
-            dic_file_name = "c2e_dic";
-        }
+        // lv.getChildAt(position).setBackgroundColor(Color.BLUE);
 
-        try
-        {
-            File[] files = new File(MainActivity.sd_data_dic_dir + "/" + type).listFiles();
-
-            for (File file : files)
-            {
-                if (file.isDirectory())
-                {
-                    dic_values.add(file.getName());
-                    dic_names.add(getDicName(file, dic_values));
-                }
-            }
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-
-        lst_pre.setEntries(dic_names.toArray(new String[0]));
-        lst_pre.setEntryValues(dic_values.toArray(new String[0]));
-        lst_pre.setDefaultValue("default/" + dic_file_name);
-
-        lst_pre.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener()
-        {
+        final ViewTreeObserver.OnPreDrawListener mOnPreDrawListener = new ViewTreeObserver.OnPreDrawListener() {
             @Override
-            public boolean onPreferenceClick(Preference preference)
+            public boolean onPreDraw() {
+                lv.getViewTreeObserver().removeOnPreDrawListener(this);
+                // Do what you want to do on data loading here
+                String color_string = "#99FFD7";
+                int myColor = Color.parseColor(color_string);
+                View item = lv.getChildAt(position);
+                item.setBackgroundColor(myColor);
+                return true;
+            }
+        };
+
+        lv.getViewTreeObserver().addOnPreDrawListener(mOnPreDrawListener);
+
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+            //单击ListView Item
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
             {
-                return false;
+                Toast.makeText(getApplicationContext(), "长按选择字典", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener()
+        {
+            //长按ListView Item
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id)
+            {
+
+                return true;
             }
         });
     }
-
 }

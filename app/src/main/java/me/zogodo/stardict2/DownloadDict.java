@@ -1,13 +1,10 @@
 package me.zogodo.stardict2;
 
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Environment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,14 +12,10 @@ import android.widget.*;
 import me.zogodo.android.AndroidHelp;
 import me.zogodo.sqlite.SqliteHelper;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class AllDict extends AppCompatActivity
+public class DownloadDict extends AppCompatActivity
 {
     public static String DB_NAME;
     public static String DB_PATH;
@@ -119,7 +112,7 @@ public class AllDict extends AppCompatActivity
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id)
             {
                 String file_url = srclist.get(position);
-                AndroidHelp.me.downloadFileToDataPath(AllDict.this, file_url, "dict");
+                AndroidHelp.me.downloadFileToDataPath(DownloadDict.this, file_url, "dict");
                 return true;
             }
         });
