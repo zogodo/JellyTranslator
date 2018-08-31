@@ -53,6 +53,8 @@ public class DownloadCompleteReceiver extends BroadcastReceiver
                 LinuxCmd.getCmdReadLine(cmd);
                 Toast.makeText(context, "字典下载成功。", Toast.LENGTH_LONG).show();
                 //TODO 将字典存到数据库
+                String sql = "insert into my_dict(id, dict_id, download_time) " +
+                        "values()";
             }
             catch (Exception e)
             {

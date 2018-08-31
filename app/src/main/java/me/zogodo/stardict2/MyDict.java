@@ -38,10 +38,10 @@ public class MyDict extends AppCompatActivity
     ArrayList<HashMap<String, Object>> listItem;
     public void updateListView()
     {
-        Cursor cursor = db.rawQuery("select id, dict_name, selected, type_name||' '||word_count as dict_info, down_src " +
-                "from v_my_dict order by id desc", null);
+        Cursor cursor = db.rawQuery("select id, dict_name, selected, type_name||' '||word_count " +
+                "as dict_info, down_src from v_my_dict order by id desc", null);
 
-        final ListView lv = (ListView) findViewById(R.id.listView3);//得到ListView对象的引用, 为ListView设置Adapter来绑定数据
+        final ListView lv = (ListView) findViewById(R.id.listView3);
         listItem = new ArrayList<>();
         final ArrayList<String> srclist = new ArrayList<>();
         int i = 0;

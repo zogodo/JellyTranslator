@@ -68,9 +68,10 @@ public class DownloadDict extends AppCompatActivity
         return true;
     }
 
+    public static int sel_dict_id;
     public void updateListView(int dict_type_id)
     {
-        Cursor cursor = db.rawQuery("select dict_name, type_name||' '||word_count as dict_info, down_src " +
+        Cursor cursor = db.rawQuery("select id, dict_name, type_name||' '||word_count as dict_info, down_src " +
                 "from v_all_dict where dict_type_id="+dict_type_id, null);
 
         ListView lv = (ListView) findViewById(R.id.listView2);//得到ListView对象的引用, 为ListView设置Adapter来绑定数据
@@ -86,9 +87,10 @@ public class DownloadDict extends AppCompatActivity
         final ArrayList<String> srclist = new ArrayList<>();
         while (cursor.moveToNext())
         {
-            HashMap<String, Object> map = new HashMap<String, Object>();
+            HashMap<String, Object> map = new HashMap<>();
             map.put("dict_name", cursor.getString(cursor.getColumnIndex("dict_name")));
             map.put("dict_info", cursor.getString(cursor.getColumnIndex("dict_info")));
+            map.put("dict_id", cursor.getInt(cursor.getColumnIndex("id")));
             srclist.add(cursor.getString(cursor.getColumnIndex("down_src")));
             listItem.add(map);
         }
@@ -111,6 +113,9 @@ public class DownloadDict extends AppCompatActivity
             //长按ListView Item
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id)
             {
+
+                sel_dict_id = (int)listItem.get(position).get("dict_id");
+
                 String file_url = srclist.get(position);
                 AndroidHelp.me.downloadFileToDataPath(DownloadDict.this, file_url, "dict");
                 return true;
