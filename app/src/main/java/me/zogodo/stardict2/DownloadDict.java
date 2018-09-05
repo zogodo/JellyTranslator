@@ -72,7 +72,7 @@ public class DownloadDict extends AppCompatActivity
     ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String, Object>>();
     public void updateListView(int dict_type_id)
     {
-        Cursor cursor = db.rawQuery("select id, dict_name, type_name, word_count, size, down_src " +
+        Cursor cursor = db.rawQuery("select id, dict_name, type_name, word_count, file_size, down_src " +
                 "from v_all_dict where dict_type_id="+dict_type_id, null);
 
         ListView lv = (ListView) findViewById(R.id.listView2);//得到ListView对象的引用, 为ListView设置Adapter来绑定数据
@@ -91,8 +91,8 @@ public class DownloadDict extends AppCompatActivity
             map.put("dict_name", cursor.getString(cursor.getColumnIndex("dict_name")));
             String type_name = cursor.getString(cursor.getColumnIndex("type_name"));
             String word_count = cursor.getString(cursor.getColumnIndex("word_count"));
-            String size = cursor.getString(cursor.getColumnIndex("size"));
-            map.put("dict_info", type_name + " " + word_count + "词 " + size);
+            String file_size = cursor.getString(cursor.getColumnIndex("file_size"));
+            map.put("dict_info", type_name + "  " + word_count + "词  " + file_size);
             map.put("dict_id", cursor.getInt(cursor.getColumnIndex("id")));
             srclist.add(cursor.getString(cursor.getColumnIndex("down_src")));
             listItem.add(map);
