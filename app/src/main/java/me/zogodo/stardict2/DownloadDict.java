@@ -69,6 +69,7 @@ public class DownloadDict extends AppCompatActivity
     }
 
     public static int sel_dict_id;
+    ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String, Object>>();
     public void updateListView(int dict_type_id)
     {
         Cursor cursor = db.rawQuery("select id, dict_name, type_name||' '||word_count as dict_info, down_src " +
@@ -83,7 +84,6 @@ public class DownloadDict extends AppCompatActivity
                 new int[]{R.id.text1, R.id.text2});
         lv.setAdapter(adapter);
         */
-        ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String, Object>>();
         final ArrayList<String> srclist = new ArrayList<>();
         while (cursor.moveToNext())
         {
