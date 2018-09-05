@@ -81,13 +81,13 @@ public class MainActivity extends AppCompatActivity
         }
         busy_box_path += " ";
 
-        AppSetting setting = AppSetting.getSetting(this);
+        // AppSetting setting = AppSetting.getSetting(this);
 
         Long time0 = System.currentTimeMillis();
         try
         {
-            e2c_dic = new StarDict(sd_data_dic_dir + "/"+setting.en_dic_name+"/", setting.en_dic_file_name);
-            c2e_dic = new StarDict(sd_data_dic_dir + "/"+setting.cn_dic_name+"/", setting.cn_dic_file_name);
+            e2c_dic = new StarDict(sd_data_dic_dir + "/default_e2c/", "e2c_dic");
+            c2e_dic = new StarDict(sd_data_dic_dir + "/default_c2e/", "c2e_dic");
             dic_now = e2c_dic;
         }
         catch (Exception e)

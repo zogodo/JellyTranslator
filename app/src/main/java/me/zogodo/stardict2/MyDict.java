@@ -11,9 +11,11 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
-import me.zogodo.android.AndroidHelp;
+
+import me.zogodo.dict.StarDict;
 import me.zogodo.sqlite.SqliteHelper;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -24,7 +26,7 @@ public class MyDict extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_helper);
+        setContentView(R.layout.activity_my_dict);
 
         String DB_NAME = "dictionary.db";
         String DB_PATH = MainActivity.sd_data_dir + "/Documents/" + DB_NAME; // 存放路径
@@ -36,15 +38,15 @@ public class MyDict extends AppCompatActivity
 
     int position = 0;
     ArrayList<HashMap<String, Object>> listItem;
+    ArrayList<String> pathlist = new ArrayList<>();
     public void updateListView()
     {
         Cursor cursor = db.rawQuery(
-                "select id, dict_name, selected, type_name, word_count, file_size, down_src " +
+                "select id, dict_name, selected, type_name, word_count, file_size, dict_path " +
                 "from v_my_dict order by id desc", null);
 
         final ListView lv = (ListView) findViewById(R.id.listView3);
         listItem = new ArrayList<>();
-        final ArrayList<String> srclist = new ArrayList<>();
         int i = 0;
         while (cursor.moveToNext())
         {
@@ -55,7 +57,7 @@ public class MyDict extends AppCompatActivity
             String file_size = cursor.getString(cursor.getColumnIndex("file_size"));
             map.put("dict_info", type_name + "  " + word_count + "词  " + file_size);
             map.put("dict_id", cursor.getInt(cursor.getColumnIndex("id")));
-            srclist.add(cursor.getString(cursor.getColumnIndex("down_src")));
+            pathlist.add(cursor.getString(cursor.getColumnIndex("dict_path")));
             listItem.add(map);
             if (cursor.getInt(cursor.getColumnIndex("selected")) == 1) {
                 position = i;
@@ -108,6 +110,18 @@ public class MyDict extends AppCompatActivity
                 db.execSQL(sql);
                 updateListView();
                 //TODO MainActivity 换字典
+                try
+                {
+                    String dict_path = pathlist.get(position);
+                    String[] dict_path_arr = dict_path.split("/");
+                    String dic_name = dict_path_arr[0];
+                    String dic_file_name = dict_path_arr[1];
+                    MainActivity.e2c_dic = new StarDict(MainActivity.sd_data_dic_dir + "/" + dic_name + "/", dic_file_name);
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
                 return true;
             }
         });
