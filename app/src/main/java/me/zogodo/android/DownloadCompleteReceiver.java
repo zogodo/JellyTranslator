@@ -62,7 +62,7 @@ public class DownloadCompleteReceiver extends BroadcastReceiver
 
                 Toast.makeText(context, "字典下载成功。", Toast.LENGTH_LONG).show();
 
-                //TODO 将字典存到数据库
+                // 将字典存到数据库
                 String sql = "insert into my_dict(dict_id, down_time, dict_path, selected) " +
                         "values(?, CURRENT_TIMESTAMP, ?, 0)";  // CURRENT_TIMESTAMP 是格林尼治时间
                 SQLiteDatabase db = SqliteHelper.getDB(context, DownloadDict.DB_PATH);

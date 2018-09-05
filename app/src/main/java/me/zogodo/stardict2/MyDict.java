@@ -38,8 +38,9 @@ public class MyDict extends AppCompatActivity
     ArrayList<HashMap<String, Object>> listItem;
     public void updateListView()
     {
-        Cursor cursor = db.rawQuery("select id, dict_name, selected, type_name||' '||word_count " +
-                "as dict_info, down_src from v_my_dict order by id desc", null);
+        Cursor cursor = db.rawQuery(
+                "select id, dict_name, selected, type_name, word_count, file_size, down_src " +
+                "from v_my_dict order by id desc", null);
 
         final ListView lv = (ListView) findViewById(R.id.listView3);
         listItem = new ArrayList<>();
@@ -49,7 +50,10 @@ public class MyDict extends AppCompatActivity
         {
             HashMap<String, Object> map = new HashMap<String, Object>();
             map.put("dict_name", cursor.getString(cursor.getColumnIndex("dict_name")));
-            map.put("dict_info", cursor.getString(cursor.getColumnIndex("dict_info")));
+            String type_name = cursor.getString(cursor.getColumnIndex("type_name"));
+            String word_count = cursor.getString(cursor.getColumnIndex("word_count"));
+            String file_size = cursor.getString(cursor.getColumnIndex("file_size"));
+            map.put("dict_info", type_name + "  " + word_count + "词  " + file_size);
             map.put("dict_id", cursor.getInt(cursor.getColumnIndex("id")));
             srclist.add(cursor.getString(cursor.getColumnIndex("down_src")));
             listItem.add(map);
